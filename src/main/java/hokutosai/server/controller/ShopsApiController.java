@@ -22,14 +22,14 @@ public class ShopsApiController {
 	@Autowired
     private DetailedShopRepository detailedShopRepository;
 
-	 @RequestMapping(value = "/list", method = RequestMethod.GET)
-	 public Iterable<SimpleShop> list() {
-	     return this.shopRepository.findAll();
-	 }
+	@RequestMapping(method = RequestMethod.GET)
+	public Iterable<SimpleShop> enumerate() {
+	    return this.shopRepository.findAll();
+	}
 
-	 @RequestMapping(value = "/list/detail", method = RequestMethod.GET)
-	 public Iterable<DetailedShop> listDetail() {
-	     return this.detailedShopRepository.findAll();
-	 }
+	@RequestMapping(value = "/details", method = RequestMethod.GET)
+	public Iterable<DetailedShop> details() {
+	    return this.detailedShopRepository.findAll();
+	}
 
 }
