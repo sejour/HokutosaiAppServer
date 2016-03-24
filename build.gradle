@@ -30,6 +30,15 @@ sourceSets {
     main { compileClasspath += configurations.provided }
 }
 
+eclipse {
+	project.name = 'HokutosaiAppServer'
+
+	classpath {
+    	plusConfigurations += [configurations.provided]
+		noExportConfigurations += [configurations.provided]
+	}
+}
+
 repositories {
   	mavenCentral()
 }
