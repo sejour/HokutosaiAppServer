@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShopsApiController {
 
 	@Autowired
-    private SimpleShopRepository shopRepository;
+    private SimpleShopRepository simpleShopRepository;
 
 	@Autowired
     private DetailedShopRepository detailedShopRepository;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Iterable<SimpleShop> enumerate() {
-	    return this.shopRepository.findAll();
+	    return this.simpleShopRepository.findAll();
 	}
 
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
