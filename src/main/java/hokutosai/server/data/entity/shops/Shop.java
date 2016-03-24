@@ -16,7 +16,7 @@ import lombok.Data;
 public abstract class Shop {
 
 	@Column(name = "shop_id") @Id @GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonProperty("place_id")
+	@JsonProperty("shop_id")
 	private Integer shopId;
 
 	@Column(name = "name") @NotNull
