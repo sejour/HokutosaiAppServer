@@ -1,7 +1,9 @@
 package hokutosai.server.controller;
 
-import hokutosai.server.data.entity.Shop;
-import hokutosai.server.data.repository.ShopRepository;
+import hokutosai.server.data.entity.shops.DetailedShop;
+import hokutosai.server.data.entity.shops.SimpleShop;
+import hokutosai.server.data.repository.shops.DetailedShopRepository;
+import hokutosai.server.data.repository.shops.SimpleShopRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -15,11 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShopsApiController {
 
 	@Autowired
-    private ShopRepository shopRepository;
+    private SimpleShopRepository shopRepository;
+
+	@Autowired
+    private DetailedShopRepository detailedShopRepository;
 
 	 @RequestMapping(value = "/list", method = RequestMethod.GET)
-	 public Iterable<Shop> list() {
-	     return shopRepository.findAll();
+	 public Iterable<SimpleShop> list() {
+	     return this.shopRepository.findAll();
+	 }
+
+	 @RequestMapping(value = "/list/detail", method = RequestMethod.GET)
+	 public Iterable<DetailedShop> listDetail() {
+	     return this.detailedShopRepository.findAll();
 	 }
 
 }

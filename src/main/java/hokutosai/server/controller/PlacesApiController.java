@@ -1,7 +1,7 @@
 package hokutosai.server.controller;
 
-import hokutosai.server.data.entity.Place;
-import hokutosai.server.data.repository.PlaceRepository;
+import hokutosai.server.data.entity.places.Place;
+import hokutosai.server.data.repository.places.PlaceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
