@@ -1,5 +1,7 @@
 package hokutosai.server.data.entity.shops;
 
+import hokutosai.server.data.entity.places.Place;
+
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,6 +26,12 @@ public class DetailedShop extends Shop {
 	@JsonProperty("introduction")
 	@Getter @Setter
 	private String introduction;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "place_id", insertable = false, updatable = false)
+	@JsonProperty("place")
+	@Getter @Setter
+	private Place place;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
