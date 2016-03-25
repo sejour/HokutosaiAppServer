@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,15 +14,16 @@ import lombok.Data;
 @Data
 public abstract class Shop {
 
-	@Column(name = "shop_id") @Id @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@Column(name = "shop_id") @GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonProperty("shop_id")
 	private Integer shopId;
 
-	@Column(name = "name") @NotNull
+	@Column(name = "name", nullable = false)
 	@JsonProperty("name")
 	private String name;
 
-	@Column(name = "tenant") @NotNull
+	@Column(name = "tenant", nullable = false)
 	@JsonProperty("tenant")
 	private String tenant;
 

@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 public abstract class AssessedScore {
 
-	@Column(name = "total_score")
+	@Column(name = "total_score", nullable = false)
 	@JsonProperty("total_score")
 	private Long totalScore;
 
-	@Column(name = "assessed_count")
+	@Column(name = "assessed_count", nullable = false)
 	@JsonProperty("assessed_count")
 	private Long assessdCount;
 

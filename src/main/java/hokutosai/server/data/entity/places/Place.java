@@ -14,12 +14,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Data
 public class Place {
 
-	@Column(name = "place_id")
 	@Id
+	@Column(name = "place_id")
 	@JsonProperty("place_id")
 	private Integer placeId;
 
-	@Column(name = "name")
+	@Column(name = "name", nullable = false)
 	@JsonProperty("name")
 	private String name;
 
