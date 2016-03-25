@@ -1,6 +1,7 @@
 package hokutosai.server.data.entity;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,7 +13,7 @@ import lombok.Data;
 @Data
 public abstract class AssessedScore {
 
-	@Column(name = "shop_id")
+	@Column(name = "shop_id") @Id
 	@JsonIgnore
 	private Integer shopId;
 
