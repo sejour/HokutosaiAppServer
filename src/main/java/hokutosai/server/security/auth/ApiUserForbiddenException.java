@@ -8,7 +8,7 @@ import hokutosai.server.error.ForbiddenException;
 public class ApiUserForbiddenException extends ForbiddenException {
 
 	public ApiUserForbiddenException(HttpServletRequest request, String userId) {
-		super(request.getMethod(), request.getRequestURI(), String.format("user_id=%s", userId));
+		super(request.getMethod(), request.getRequestURI(), String.format("Access is not allowed. [user_id=%s]", userId));
 	}
 
 }

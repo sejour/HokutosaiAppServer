@@ -8,7 +8,7 @@ import hokutosai.server.error.UnauthorizedException;
 public class ApiUserUnauthorizedException extends UnauthorizedException {
 
 	public ApiUserUnauthorizedException(HttpServletRequest request, String userId) {
-		super(request.getMethod(), request.getRequestURI(), String.format("user_id=%s", userId));
+		super(request.getMethod(), request.getRequestURI(), String.format("Invalid credentials. [user_id=%s]", userId));
 	}
 
 }

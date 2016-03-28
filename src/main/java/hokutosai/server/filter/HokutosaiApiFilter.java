@@ -39,7 +39,7 @@ public class HokutosaiApiFilter implements Filter {
 			logger.info(String.format("Permit access: %s", permitedUserId));
 			chain.doFilter(request, response);
 		} catch (HokutosaiServerException e) {
-			logger.error(String.format("Deny access: %s", e.getMessage()));
+			logger.error(String.format("Deny access: %s", e.getLogMessage()));
 			((HttpServletResponse)response).sendError(e.getHttpStatus().value(), e.getMessage());
 		}
 	}
