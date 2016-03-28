@@ -5,20 +5,20 @@ import org.springframework.http.HttpStatus;
 @SuppressWarnings("serial")
 public class UnauthorizedException extends HokutosaiServerException {
 
-	public UnauthorizedException() {
-		super(HttpStatus.UNAUTHORIZED);
+	public UnauthorizedException(String httpMethod, String uri) {
+		super(httpMethod, uri, HttpStatus.UNAUTHORIZED);
 	}
 
-	public UnauthorizedException(String message) {
-		super(HttpStatus.UNAUTHORIZED, message);
+	public UnauthorizedException(String httpMethod, String uri, String message) {
+		super(httpMethod, uri, HttpStatus.UNAUTHORIZED, message);
 	}
 
-	public UnauthorizedException(Throwable nested) {
-		super(HttpStatus.UNAUTHORIZED, nested);
+	public UnauthorizedException(String httpMethod, String uri, Throwable nested) {
+		super(httpMethod, uri, HttpStatus.UNAUTHORIZED, nested);
 	}
 
-	public UnauthorizedException(String message, Throwable nested) {
-		super(HttpStatus.UNAUTHORIZED, message, nested);
+	public UnauthorizedException(String httpMethod, String uri, String message, Throwable nested) {
+		super(httpMethod, uri, HttpStatus.UNAUTHORIZED, message, nested);
 	}
 
 }
