@@ -1,12 +1,14 @@
 package hokutosai.server.security.auth;
 
+import javax.servlet.http.HttpServletRequest;
+
 import hokutosai.server.error.ForbiddenException;
 
 @SuppressWarnings("serial")
 public class ApiUserForbiddenException extends ForbiddenException {
 
-	public ApiUserForbiddenException(String httpMethod, String uri, String userId) {
-		super(httpMethod, uri, String.format("user_id=%s", userId));
+	public ApiUserForbiddenException(HttpServletRequest request, String userId) {
+		super(request.getMethod(), request.getRequestURI(), String.format("user_id=%s", userId));
 	}
 
 }

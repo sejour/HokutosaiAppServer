@@ -1,12 +1,14 @@
 package hokutosai.server.security.auth;
 
+import javax.servlet.http.HttpServletRequest;
+
 import hokutosai.server.error.UnauthorizedException;
 
 @SuppressWarnings("serial")
 public class ApiUserUnauthorizedException extends UnauthorizedException {
 
-	public ApiUserUnauthorizedException(String httpMethod, String uri, String userId) {
-		super(httpMethod, uri, String.format("user_id=%s", userId));
+	public ApiUserUnauthorizedException(HttpServletRequest request, String userId) {
+		super(request.getMethod(), request.getRequestURI(), String.format("user_id=%s", userId));
 	}
 
 }
