@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApiUserAuthorizer {
 
+	private static final String PERMISSION_ALLOW = "allow";
+
 	@Autowired
 	private ApiUserRepository apiUserRepository;
 
@@ -42,11 +44,15 @@ public class ApiUserAuthorizer {
 			throw new ApiUserUnauthorizedException(request, userId);
 		}
 
-		String resultUserId = apiUser.getUserId();
-		String resultAccessToken = apiUser.getAccessToken();
+		String regularUserId = apiUser.getUserId();
+		String regularAccessToken = apiUser.getAccessToken();
+		String userPermission = apiUser.getPermission();
 
-		if (resultUserId.equals(userId) && resultAccessToken.equals(accessToken)) {
-			return userId;
+		if (regularUserId.equals(userId) && regularAccessToken.equals(accessToken)) {
+			if (userPermission.equals(PERMISSION_ALLOW)) {
+				return userId;
+			}
+			throw new ApiUserForbiddenException(request, userId);
 		}
 
 		throw new ApiUserUnauthorizedException(request, userId);
