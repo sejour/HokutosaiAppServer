@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @EnableAutoConfiguration
-@RequestMapping("/api/places")
+@RequestMapping("/places")
 public class PlacesApiController {
 
 	@Autowired

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @EnableAutoConfiguration
-@RequestMapping("/api")
+@RequestMapping("/system")
 public class HokutosaiApiController {
 
 	 @RequestMapping("/hello")
