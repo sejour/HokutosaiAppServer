@@ -10,6 +10,7 @@ import hokutosai.server.data.repository.auth.EndpointPermissionRepository;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.error.UnauthorizedException;
+import hokutosai.server.util.EndpointPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,8 @@ public class ApiUserAuthorizer {
 
 		ApiUserRole role = apiUser.getRole();
 
-		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(request.getRequestURI(), request.getMethod(), role.getRole());
+		EndpointPath path = new EndpointPath(request.getRequestURI());
+		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(path.toString(), request.getMethod(), role.getRole());
 		if (endpoint == null) {
 			throw new NotFoundException(request.getMethod(), request.getRequestURI(), "The endpoint does not exist.");
 		}
