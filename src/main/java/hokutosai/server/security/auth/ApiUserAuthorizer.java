@@ -2,10 +2,9 @@ package hokutosai.server.security.auth;
 
 import javax.servlet.http.HttpServletRequest;
 
-import hokutosai.server.data.domain.ApiAccessCertificate;
+import hokutosai.server.data.domain.AuthorizationApiUser;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.entity.auth.ApiUserRole;
-import hokutosai.server.data.entity.auth.EndpointCategory;
 import hokutosai.server.data.entity.auth.EndpointPermission;
 import hokutosai.server.data.repository.auth.ApiUserRepository;
 import hokutosai.server.data.repository.auth.EndpointPermissionRepository;
@@ -28,7 +27,7 @@ public class ApiUserAuthorizer {
 	@Autowired
 	private EndpointPermissionRepository endpointPermissionRepository;
 
-	public ApiAccessCertificate authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
+	public AuthorizationApiUser authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
 
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
@@ -65,11 +64,9 @@ public class ApiUserAuthorizer {
 			throw new NotFoundException("The endpoint does not exist.");
 		}
 
-		EndpointCategory category = endpoint.getCategory();
-
 		if (userId.equals(apiUser.getUserId()) && accessToken.equals(apiUser.getAccessToken())) {
-			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && category.getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
-				return new ApiAccessCertificate(uri, method, category.getCategory(), roleName, userId);
+			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && endpoint.getCategory().getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
+				return new AuthorizationApiUser(roleName, userId);
 			}
 			throw new ApiUserForbiddenException(userId);
 		}
