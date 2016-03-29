@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @EnableAutoConfiguration
-@RequestMapping("/api/shops")
+@RequestMapping("/shops")
 public class ShopsApiController {
 
 	@Autowired
