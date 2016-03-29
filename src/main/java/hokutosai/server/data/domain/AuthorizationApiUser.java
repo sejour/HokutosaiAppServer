@@ -1,12 +1,13 @@
 package hokutosai.server.data.domain;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
 public class AuthorizationApiUser {
 
+	@Getter
 	private String role;
 
+	@Getter
 	private String userId;
 
 	public AuthorizationApiUser(String userId) {
