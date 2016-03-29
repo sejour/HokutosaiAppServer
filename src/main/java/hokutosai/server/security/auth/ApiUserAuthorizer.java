@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.repository.auth.ApiUserRepository;
 import hokutosai.server.error.BadRequestException;
+import hokutosai.server.error.UnauthorizedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,11 @@ public class ApiUserAuthorizer {
 	@Autowired
 	private ApiUserRepository apiUserRepository;
 
-	public String authorize(HttpServletRequest request) throws BadRequestException, ApiUserUnauthorizedException, ApiUserForbiddenException {
+	public String authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException {
 
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
-			throw new BadRequestException(request.getMethod(), request.getRequestURI(), "Authorization header does not exist.");
+			throw new UnauthorizedException(request.getMethod(), request.getRequestURI(), "Authorization header does not exist.");
 		}
 
 		String[] credentials = authorizationHeader.split(",");
