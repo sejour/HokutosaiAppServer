@@ -1,12 +1,18 @@
 package hokutosai.server.security.auth;
 
+import lombok.Getter;
+import hokutosai.server.data.domain.AuthorizationApiUser;
 import hokutosai.server.error.ForbiddenException;
 
 @SuppressWarnings("serial")
 public class ApiUserForbiddenException extends ForbiddenException {
 
-	public ApiUserForbiddenException(String userId) {
-		super(String.format("Access is not allowed. [user_id=%s]", userId));
+	@Getter
+	private AuthorizationApiUser apiUser;
+
+	public ApiUserForbiddenException(AuthorizationApiUser apiUser) {
+		super("Access is not allowed.");
+		this.apiUser = apiUser;
 	}
 
 }

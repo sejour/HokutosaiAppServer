@@ -50,7 +50,7 @@ public class ApiUserAuthorizer {
 
 		ApiUser apiUser = apiUserRepository.findByUserId(userId);
 		if (apiUser == null) {
-			throw new ApiUserUnauthorizedException(userId);
+			throw new ApiUserUnauthorizedException(new AuthorizationApiUser(userId));
 		}
 
 		ApiUserRole role = apiUser.getRole();
@@ -66,12 +66,12 @@ public class ApiUserAuthorizer {
 
 		if (userId.equals(apiUser.getUserId()) && accessToken.equals(apiUser.getAccessToken())) {
 			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && endpoint.getCategory().getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
-				return new AuthorizationApiUser(roleName, userId);
+				return new AuthorizationApiUser(userId, roleName);
 			}
-			throw new ApiUserForbiddenException(userId);
+			throw new ApiUserForbiddenException(new AuthorizationApiUser(userId, roleName));
 		}
 
-		throw new ApiUserUnauthorizedException(userId);
+		throw new ApiUserUnauthorizedException(new AuthorizationApiUser(userId, roleName));
 	}
 
 }
