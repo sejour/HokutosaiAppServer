@@ -3,8 +3,12 @@ package hokutosai.server.security.auth;
 import javax.servlet.http.HttpServletRequest;
 
 import hokutosai.server.data.entity.auth.ApiUser;
+import hokutosai.server.data.entity.auth.ApiUserRole;
+import hokutosai.server.data.entity.auth.EndpointPermission;
 import hokutosai.server.data.repository.auth.ApiUserRepository;
+import hokutosai.server.data.repository.auth.EndpointPermissionRepository;
 import hokutosai.server.error.BadRequestException;
+import hokutosai.server.error.NotFoundException;
 import hokutosai.server.error.UnauthorizedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,10 @@ public class ApiUserAuthorizer {
 	@Autowired
 	private ApiUserRepository apiUserRepository;
 
-	public String authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException {
+	@Autowired
+	private EndpointPermissionRepository endpointPermissionRepository;
+
+	public String authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
 
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
@@ -40,18 +47,19 @@ public class ApiUserAuthorizer {
 		String accessToken = accessTokenValues[1];
 
 		ApiUser apiUser = apiUserRepository.findByUserId(userId);
-
 		if (apiUser == null) {
 			throw new ApiUserUnauthorizedException(request, userId);
 		}
 
-		String regularUserId = apiUser.getUserId();
-		String regularAccessToken = apiUser.getAccessToken();
-		String rolePermission = apiUser.getRole().getPermission();
-		String userPermission = apiUser.getPermission();
+		ApiUserRole role = apiUser.getRole();
 
-		if (regularUserId.equals(userId) && regularAccessToken.equals(accessToken)) {
-			if (rolePermission.equals(PERMISSION_ALLOW) && userPermission.equals(PERMISSION_ALLOW)) {
+		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(request.getRequestURI(), request.getMethod(), role.getRole());
+		if (endpoint == null) {
+			throw new NotFoundException(request.getMethod(), request.getRequestURI(), "The endpoint does not exist.");
+		}
+
+		if (userId.equals(apiUser.getUserId()) && accessToken.equals(apiUser.getAccessToken())) {
+			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && endpoint.getCategory().getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
 				return String.format("%s (%s)", userId, apiUser.getRole().getRole());
 			}
 			throw new ApiUserForbiddenException(request, userId);
