@@ -2,8 +2,10 @@ package hokutosai.server.security.auth;
 
 import javax.servlet.http.HttpServletRequest;
 
+import hokutosai.server.data.domain.ApiAccessCertificate;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.entity.auth.ApiUserRole;
+import hokutosai.server.data.entity.auth.EndpointCategory;
 import hokutosai.server.data.entity.auth.EndpointPermission;
 import hokutosai.server.data.repository.auth.ApiUserRepository;
 import hokutosai.server.data.repository.auth.EndpointPermissionRepository;
@@ -26,7 +28,7 @@ public class ApiUserAuthorizer {
 	@Autowired
 	private EndpointPermissionRepository endpointPermissionRepository;
 
-	public String authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
+	public ApiAccessCertificate authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
 
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
@@ -54,15 +56,20 @@ public class ApiUserAuthorizer {
 
 		ApiUserRole role = apiUser.getRole();
 
-		EndpointPath path = new EndpointPath(request.getRequestURI());
-		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(path.toString(), request.getMethod(), role.getRole());
+		String uri = request.getRequestURI();
+		String method = request.getMethod();
+		String roleName = role.getRole();
+		EndpointPath path = new EndpointPath(uri);
+		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(path.toString(), method, roleName);
 		if (endpoint == null) {
 			throw new NotFoundException(request.getMethod(), request.getRequestURI(), "The endpoint does not exist.");
 		}
 
+		EndpointCategory category = endpoint.getCategory();
+
 		if (userId.equals(apiUser.getUserId()) && accessToken.equals(apiUser.getAccessToken())) {
-			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && endpoint.getCategory().getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
-				return String.format("%s (%s)", userId, apiUser.getRole().getRole());
+			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && category.getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
+				return new ApiAccessCertificate(uri, method, category.getCategory(), roleName, userId);
 			}
 			throw new ApiUserForbiddenException(request, userId);
 		}

@@ -1,5 +1,6 @@
 package hokutosai.server.filter;
 
+import hokutosai.server.data.domain.ApiAccessCertificate;
 import hokutosai.server.error.HokutosaiServerException;
 import hokutosai.server.security.auth.ApiUserAuthorizer;
 
@@ -35,8 +36,8 @@ public class HokutosaiApiFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		try {
 			HttpServletRequest httpRequest = (HttpServletRequest)request;
-			String permitedUserId = this.apiUserAuthorizer.authorize(httpRequest);
-			logger.info(String.format("Permit access: %s", permitedUserId));
+			ApiAccessCertificate certificate = this.apiUserAuthorizer.authorize(httpRequest);
+			logger.info(String.format("Permit access: %s (%s)", certificate.getUserId(), certificate.getRole()));
 			chain.doFilter(request, response);
 		} catch (HokutosaiServerException e) {
 			logger.error(String.format("Deny access: %s", e.getLogMessage()));
