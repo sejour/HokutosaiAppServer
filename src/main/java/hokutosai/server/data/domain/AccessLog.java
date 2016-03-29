@@ -2,6 +2,8 @@ package hokutosai.server.data.domain;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import lombok.Getter;
 
 public class AccessLog {
@@ -21,10 +23,10 @@ public class AccessLog {
 	@Getter
 	private HttpStatus status;
 
-	public AccessLog(String uri, String method, AuthorizationApiUser apiUser, org.springframework.http.HttpStatus httpStatus) {
+	public AccessLog(HttpServletRequest request, AuthorizationApiUser apiUser, org.springframework.http.HttpStatus httpStatus) {
 		this.date = new Date();
-		this.uri = uri;
-		this.method = method;
+		this.uri = request.getRequestURI();
+		this.method = request.getMethod();
 		this.apiUser = apiUser;
 		this.status = new HttpStatus(httpStatus);
 	}
