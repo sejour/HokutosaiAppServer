@@ -1,8 +1,13 @@
 package hokutosai.server.filter;
 
-import hokutosai.server.data.domain.ApiAccessCertificate;
+import hokutosai.server.data.domain.AccessErrorLog;
+import hokutosai.server.data.domain.AccessLog;
+import hokutosai.server.data.domain.AuthorizationApiUser;
 import hokutosai.server.error.HokutosaiServerException;
+import hokutosai.server.log.AccessLogger;
 import hokutosai.server.security.auth.ApiUserAuthorizer;
+import hokutosai.server.security.auth.ApiUserForbiddenException;
+import hokutosai.server.security.auth.ApiUserUnauthorizedException;
 
 import java.io.IOException;
 
@@ -15,18 +20,18 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class HokutosaiApiFilter implements Filter {
 
 	@Autowired
 	private ApiUserAuthorizer apiUserAuthorizer;
 
-	private static final Logger logger = LoggerFactory.getLogger(HokutosaiApiFilter.class);
+	@Autowired
+	private AccessLogger accessLogger;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -34,15 +39,47 @@ public class HokutosaiApiFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletResponse httpResponse = (HttpServletResponse)response;
+		AuthorizationApiUser apiUser = null;
+
 		try {
-			HttpServletRequest httpRequest = (HttpServletRequest)request;
-			ApiAccessCertificate certificate = this.apiUserAuthorizer.authorize(httpRequest);
-			logger.info(String.format("Permit access: %s (%s)", certificate.getUserId(), certificate.getRole()));
+			apiUser = this.apiUserAuthorizer.authorize(httpRequest);
 			chain.doFilter(request, response);
-		} catch (HokutosaiServerException e) {
-			logger.error(String.format("Deny access: %s", e.getLogMessage()));
-			((HttpServletResponse)response).sendError(e.getHttpStatus().value(), e.getMessage());
+			this.accessLogger.access(new AccessLog(httpRequest, apiUser, HttpStatus.valueOf(httpResponse.getStatus())));
 		}
+		catch (ApiUserUnauthorizedException e) {
+			this.handleException(e, httpRequest, httpResponse, e.getApiUser());
+		}
+		catch (ApiUserForbiddenException e) {
+			this.handleException(e, httpRequest, httpResponse, e.getApiUser());
+		}
+		catch (Throwable e) {
+			this.handleException(e, httpRequest, httpResponse, apiUser);
+		}
+	}
+
+	private void handleException(Throwable threw, HttpServletRequest httpRequest, HttpServletResponse httpResponse, AuthorizationApiUser apiUser) {
+		if (threw == null) { return; }
+
+		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+		for (Throwable e = threw; e != null; e = e.getCause()) {
+			if (e instanceof HokutosaiServerException) {
+				HokutosaiServerException hse = (HokutosaiServerException)e;
+				status = hse.getHttpStatus();
+				threw = e;
+				break;
+			}
+		}
+
+		this.accessLogger.error(new AccessErrorLog(httpRequest, apiUser, status, threw));
+
+		this.respondError(status, status.is5xxServerError() ? null : threw.getMessage(), httpResponse);
+	}
+
+	private void respondError(HttpStatus status, String message, HttpServletResponse response) {
+
 	}
 
 	@Override
