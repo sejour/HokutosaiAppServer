@@ -32,18 +32,18 @@ public class ApiUserAuthorizer {
 
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
-			throw new UnauthorizedException(request.getMethod(), request.getRequestURI(), "Authorization header does not exist.");
+			throw new UnauthorizedException("Authorization header does not exist.");
 		}
 
 		String[] credentials = authorizationHeader.split(",");
 		if (credentials.length != 2) {
-			throw new BadRequestException(request.getMethod(), request.getRequestURI(), "Bad format of credentials.");
+			throw new BadRequestException("Bad format of credentials.");
 		}
 
 		String[] userIdValues = credentials[0].split("=");
 		String[] accessTokenValues = credentials[1].split("=");
 		if (userIdValues.length != 2 || accessTokenValues.length != 2 || !userIdValues[0].equals("user_id") || !accessTokenValues[0].equals("access_token")) {
-			throw new BadRequestException(request.getMethod(), request.getRequestURI(), "Bad format of credentials.");
+			throw new BadRequestException("Bad format of credentials.");
 		}
 
 		String userId = userIdValues[1];
@@ -51,7 +51,7 @@ public class ApiUserAuthorizer {
 
 		ApiUser apiUser = apiUserRepository.findByUserId(userId);
 		if (apiUser == null) {
-			throw new ApiUserUnauthorizedException(request, userId);
+			throw new ApiUserUnauthorizedException(userId);
 		}
 
 		ApiUserRole role = apiUser.getRole();
@@ -62,7 +62,7 @@ public class ApiUserAuthorizer {
 		EndpointPath path = new EndpointPath(uri);
 		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(path.toString(), method, roleName);
 		if (endpoint == null) {
-			throw new NotFoundException(request.getMethod(), request.getRequestURI(), "The endpoint does not exist.");
+			throw new NotFoundException("The endpoint does not exist.");
 		}
 
 		EndpointCategory category = endpoint.getCategory();
@@ -71,10 +71,10 @@ public class ApiUserAuthorizer {
 			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && category.getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
 				return new ApiAccessCertificate(uri, method, category.getCategory(), roleName, userId);
 			}
-			throw new ApiUserForbiddenException(request, userId);
+			throw new ApiUserForbiddenException(userId);
 		}
 
-		throw new ApiUserUnauthorizedException(request, userId);
+		throw new ApiUserUnauthorizedException(userId);
 	}
 
 }
