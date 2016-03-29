@@ -47,11 +47,12 @@ public class ApiUserAuthorizer {
 
 		String regularUserId = apiUser.getUserId();
 		String regularAccessToken = apiUser.getAccessToken();
+		String rolePermission = apiUser.getRole().getPermission();
 		String userPermission = apiUser.getPermission();
 
 		if (regularUserId.equals(userId) && regularAccessToken.equals(accessToken)) {
-			if (userPermission.equals(PERMISSION_ALLOW)) {
-				return userId;
+			if (rolePermission.equals(PERMISSION_ALLOW) && userPermission.equals(PERMISSION_ALLOW)) {
+				return String.format("%s (%s)", userId, apiUser.getRole().getRole());
 			}
 			throw new ApiUserForbiddenException(request, userId);
 		}
