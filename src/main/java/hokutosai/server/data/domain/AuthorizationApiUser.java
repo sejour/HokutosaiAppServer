@@ -1,13 +1,17 @@
 package hokutosai.server.data.domain;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import lombok.Getter;
 
 public class AuthorizationApiUser {
 
 	@Getter
+	@Field("role")
 	private String role;
 
 	@Getter
+	@Field("user_id")
 	private String userId;
 
 	public AuthorizationApiUser(String userId) {
