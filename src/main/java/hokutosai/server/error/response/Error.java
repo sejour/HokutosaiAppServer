@@ -1,14 +1,14 @@
-package hokutosai.server.error;
-
-import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude;
+package hokutosai.server.error.response;
 
 import lombok.Getter;
 
+import org.springframework.http.HttpStatus;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
+public class Error {
 
 	@Getter
 	@JsonProperty("code")
@@ -22,7 +22,7 @@ public class ErrorResponse {
 	@JsonProperty("message")
 	private String message;
 
-	public ErrorResponse(HttpStatus status, String message) {
+	public Error(HttpStatus status, String message) {
 		this.statusCode = status.value();
 		this.cause = status.getReasonPhrase();
 		this.message = message;
