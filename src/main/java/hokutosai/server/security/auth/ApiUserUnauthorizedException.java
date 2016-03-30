@@ -1,7 +1,7 @@
 package hokutosai.server.security.auth;
 
 import lombok.Getter;
-import hokutosai.server.data.domain.AuthorizationApiUser;
+import hokutosai.server.data.domain.auth.AuthorizationApiUser;
 import hokutosai.server.error.UnauthorizedException;
 
 @SuppressWarnings("serial")

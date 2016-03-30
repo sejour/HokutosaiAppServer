@@ -1,7 +1,7 @@
 package hokutosai.server.log;
 
-import hokutosai.server.data.domain.AccessErrorLog;
-import hokutosai.server.data.domain.AccessLog;
+import hokutosai.server.data.domain.log.AccessErrorLog;
+import hokutosai.server.data.domain.log.AccessLog;
 
 import org.springframework.stereotype.Component;
 

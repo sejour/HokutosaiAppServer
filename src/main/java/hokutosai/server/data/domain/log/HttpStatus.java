@@ -1,4 +1,4 @@
-package hokutosai.server.data.domain;
+package hokutosai.server.data.domain.log;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 

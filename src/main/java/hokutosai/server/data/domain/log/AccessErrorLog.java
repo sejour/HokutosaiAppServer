@@ -1,4 +1,6 @@
-package hokutosai.server.data.domain;
+package hokutosai.server.data.domain.log;
+
+import hokutosai.server.data.domain.auth.AuthorizationApiUser;
 
 import javax.servlet.http.HttpServletRequest;
 
