@@ -4,6 +4,7 @@ import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
+import hokutosai.server.error.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -29,8 +30,10 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "{id:^[0-9]+$}", method = RequestMethod.GET)
-	public SimpleShop byId(@PathVariable Integer id) {
-		return this.simpleShopRepository.findByShopId(id);
+	public SimpleShop byId(@PathVariable Integer id) throws NotFoundException {
+		SimpleShop result = this.simpleShopRepository.findByShopId(id);
+		if (result == null) throw new NotFoundException("Content was not found.");
+		return result;
 	}
 
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
@@ -39,8 +42,10 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "/details/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public DetailedShop detailsById(@PathVariable Integer id) {
-		return this.detailedShopRepository.findByShopId(id);
+	public DetailedShop detailsById(@PathVariable Integer id) throws NotFoundException {
+		DetailedShop result = this.detailedShopRepository.findByShopId(id);
+		if (result == null) throw new NotFoundException("Content was not found.");
+		return result;
 	}
 
 }
