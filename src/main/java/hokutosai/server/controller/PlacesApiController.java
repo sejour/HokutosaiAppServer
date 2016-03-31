@@ -18,7 +18,7 @@ public class PlacesApiController {
     private PlaceRepository placeRepository;
 
 	 @RequestMapping(value = "/list", method = RequestMethod.GET)
-	 public Iterable<Place> list() {
+	 public Iterable<Place> get() {
 	     return placeRepository.findAll();
 	 }
 

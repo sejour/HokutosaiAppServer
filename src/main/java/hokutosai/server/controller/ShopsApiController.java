@@ -33,36 +33,36 @@ public class ShopsApiController {
 	private ShopScoreRepository shopScoreRepository;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public Iterable<SimpleShop> enumerate() {
+	public Iterable<SimpleShop> get() {
 	    return this.simpleShopRepository.findAll();
 	}
 
 	@RequestMapping(value = "{id:^[0-9]+$}", method = RequestMethod.GET)
-	public SimpleShop byId(@PathVariable Integer id) throws NotFoundException {
+	public SimpleShop getById(@PathVariable Integer id) throws NotFoundException {
 		SimpleShop result = this.simpleShopRepository.findByShopId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
 	}
 
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
-	public Iterable<DetailedShop> detailsEnumerate() {
+	public Iterable<DetailedShop> getDetails() {
 	    return this.detailedShopRepository.findAll();
 	}
 
 	@RequestMapping(value = "/details/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public DetailedShop detailsById(@PathVariable Integer id) throws NotFoundException {
+	public DetailedShop getDetailsById(@PathVariable Integer id) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
 	}
 
 	@RequestMapping(value = "/assess", method = RequestMethod.GET)
-	public Iterable<ShopScore> assess() throws NotFoundException {
+	public Iterable<ShopScore> getAssess() throws NotFoundException {
 		return this.shopScoreRepository.findAll();
 	}
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public ShopScore assess(@PathVariable Integer id) throws NotFoundException {
+	public ShopScore getAssessById(@PathVariable Integer id) throws NotFoundException {
 		ShopScore result = this.shopScoreRepository.findByShopId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
@@ -72,7 +72,7 @@ public class ShopsApiController {
 	private static final int SCORE_MAX = 5;
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
-	public ShopScore assess(
+	public ShopScore postAssessWithId(
 			@PathVariable Integer id,
 			@RequestParam("score") Integer score,
 			@RequestParam(value = "previous_score", required = false) Integer previousScore
