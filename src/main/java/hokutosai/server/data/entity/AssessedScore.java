@@ -17,6 +17,6 @@ public abstract class AssessedScore {
 
 	@Column(name = "assessed_count", nullable = false)
 	@JsonProperty("assessed_count")
-	private Long assessdCount;
+	private Long assessedCount;
 
 }
