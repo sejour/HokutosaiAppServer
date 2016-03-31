@@ -13,10 +13,10 @@ public abstract class AssessedScore {
 
 	@Column(name = "total_score", nullable = false)
 	@JsonProperty("total_score")
-	private Long totalScore;
+	private Integer totalScore;
 
 	@Column(name = "assessed_count", nullable = false)
 	@JsonProperty("assessed_count")
-	private Long assessedCount;
+	private Integer assessedCount;
 
 }
