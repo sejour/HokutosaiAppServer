@@ -56,6 +56,18 @@ public class ShopsApiController {
 		return result;
 	}
 
+	@RequestMapping(value = "/assess", method = RequestMethod.GET)
+	public Iterable<ShopScore> assess() throws NotFoundException {
+		return this.shopScoreRepository.findAll();
+	}
+
+	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.GET)
+	public ShopScore assess(@PathVariable Integer id) throws NotFoundException {
+		ShopScore result = this.shopScoreRepository.findByShopId(id);
+		if (result == null) throw new NotFoundException("The id is not used.");
+		return result;
+	}
+
 	private static final int SCORE_MIN = 1;
 	private static final int SCORE_MAX = 5;
 
