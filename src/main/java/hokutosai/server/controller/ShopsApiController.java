@@ -6,8 +6,9 @@ import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
-import hokutosai.server.error.BadRequestException;
+import hokutosai.server.error.InvalidParameterValueException;
 import hokutosai.server.error.NotFoundException;
+import hokutosai.server.security.ParamValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -55,16 +56,22 @@ public class ShopsApiController {
 		return result;
 	}
 
+	private static final int SCORE_MIN = 1;
+	private static final int SCORE_MAX = 5;
+
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
 	public ShopScore assess(
 			@PathVariable Integer id,
 			@RequestParam("score") Integer score,
 			@RequestParam(value = "previous_score", required = false) Integer previousScore
-		) throws NotFoundException
+		) throws NotFoundException, InvalidParameterValueException
 	{
+		ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
+
 		if (previousScore == null) {
 			this.shopScoreRepository.assess(id, score);
 		} else {
+			ParamValidator.range("previous_score", previousScore, SCORE_MIN, SCORE_MAX);
 			this.shopScoreRepository.reassess(id, score, previousScore);
 		}
 
