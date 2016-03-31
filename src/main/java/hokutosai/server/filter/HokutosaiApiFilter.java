@@ -1,8 +1,8 @@
 package hokutosai.server.filter;
 
-import hokutosai.server.data.domain.auth.AuthorizationApiUser;
-import hokutosai.server.data.domain.log.AccessErrorLog;
-import hokutosai.server.data.domain.log.AccessLog;
+import hokutosai.server.data.document.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.log.AccessErrorLog;
+import hokutosai.server.data.document.log.AccessLog;
 import hokutosai.server.error.HokutosaiServerException;
 import hokutosai.server.error.response.ErrorResponse;
 import hokutosai.server.log.AccessLogger;

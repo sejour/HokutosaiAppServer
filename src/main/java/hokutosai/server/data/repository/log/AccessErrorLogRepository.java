@@ -1,6 +1,6 @@
 package hokutosai.server.data.repository.log;
 
-import hokutosai.server.data.domain.log.AccessErrorLog;
+import hokutosai.server.data.document.log.AccessErrorLog;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

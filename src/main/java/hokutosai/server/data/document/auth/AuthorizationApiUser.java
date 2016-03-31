@@ -1,4 +1,4 @@
-package hokutosai.server.data.domain.auth;
+package hokutosai.server.data.document.auth;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 

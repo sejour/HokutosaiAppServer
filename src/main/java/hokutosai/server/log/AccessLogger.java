@@ -1,7 +1,7 @@
 package hokutosai.server.log;
 
-import hokutosai.server.data.domain.log.AccessErrorLog;
-import hokutosai.server.data.domain.log.AccessLog;
+import hokutosai.server.data.document.log.AccessErrorLog;
+import hokutosai.server.data.document.log.AccessLog;
 import hokutosai.server.data.repository.log.AccessErrorLogRepository;
 import hokutosai.server.data.repository.log.AccessLogRepository;
 

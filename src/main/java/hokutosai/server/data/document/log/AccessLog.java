@@ -1,6 +1,6 @@
-package hokutosai.server.data.domain.log;
+package hokutosai.server.data.document.log;
 
-import hokutosai.server.data.domain.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.auth.AuthorizationApiUser;
 
 import java.util.Date;
 

@@ -2,7 +2,7 @@ package hokutosai.server.security.auth;
 
 import javax.servlet.http.HttpServletRequest;
 
-import hokutosai.server.data.domain.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.auth.AuthorizationApiUser;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.entity.auth.ApiUserRole;
 import hokutosai.server.data.entity.auth.EndpointPermission;
