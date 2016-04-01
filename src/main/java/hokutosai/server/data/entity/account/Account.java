@@ -2,6 +2,7 @@ package hokutosai.server.data.entity.account;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.Data;
 @Data
 public class Account {
 
+	@Id
 	@Column(name = "account_id")
 	private String accountId;
 
