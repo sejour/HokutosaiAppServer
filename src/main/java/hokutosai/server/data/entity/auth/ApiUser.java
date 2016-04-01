@@ -8,28 +8,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "api_users")
-@Data
-public class ApiUser {
+public class ApiUser extends Permission {
 
 	@Id
 	@Column(name = "user_id")
+	@Getter @Setter
 	private String userId;
 
 	@Column(name = "access_token")
+	@Getter @Setter
 	private String accessToken;
-
-	//@Column(name = "role")
-	//private String role;
-
-	@Column(name = "permission")
-	private String permission;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "role", insertable = false, updatable = false)
+	@Getter @Setter
 	private ApiUserRole role;
 
 }
