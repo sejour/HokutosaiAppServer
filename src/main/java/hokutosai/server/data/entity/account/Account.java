@@ -2,7 +2,10 @@ package hokutosai.server.data.entity.account;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -19,11 +22,12 @@ public class Account {
 	@Column(name = "password")
 	private String password;
 
-	@Column(name = "role")
-	private String role;
-
 	@Column(name = "permission")
 	private String permission;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "role", insertable = false, updatable = false)
+	private AccountRole role;
 
 	@Column(name = "name")
 	private String name;
