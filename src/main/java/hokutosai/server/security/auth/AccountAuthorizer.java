@@ -8,28 +8,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountAuthorizer {
-
-	private static final String PERMISSION_ALLOW = "allow";
+public class AccountAuthorizer extends Authorizer {
 
 	@Autowired
 	private AccountRepository accountRepository;
 
-	public AuthorizedAccount authorize(String id, String password) throws AccountUnauthorizedException, AccountForbiddenException {
-		Account account = this.accountRepository.findByAccountId(id);
+	public AuthorizedAccount authorize(AccountCredentials credentials) throws AccountUnauthorizedException, AccountForbiddenException {
+		Account account = this.accountRepository.findByAccountId(credentials.getId());
 
 		if (account == null) {
-			throw new AccountUnauthorizedException(id);
+			throw new AccountUnauthorizedException(credentials.getId());
 		}
 
-		if (password.equals(account.getPassword())) {
-			if (account.getRole().getPermission().equals(PERMISSION_ALLOW) && account.getPermission().equals(PERMISSION_ALLOW)) {
+		if (account.getPassword().equals(credentials.getPassword())) {
+			if (isAllow(account.getRole()) && isAllow(account)) {
 				return new AuthorizedAccount(account);
 			}
 			throw new AccountForbiddenException(account);
 		}
 
-		throw new AccountUnauthorizedException(id);
+		throw new AccountUnauthorizedException(credentials.getId());
 	}
 
 }
