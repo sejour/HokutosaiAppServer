@@ -3,12 +3,22 @@ package hokutosai.server.filter;
 import hokutosai.server.data.document.auth.AuthorizationApiUser;
 import hokutosai.server.data.document.log.AccessErrorLog;
 import hokutosai.server.data.document.log.AccessLog;
+import hokutosai.server.data.entity.Endpoint;
+import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.repository.EndpointRepository;
+import hokutosai.server.error.ForbiddenException;
 import hokutosai.server.error.HokutosaiServerException;
+import hokutosai.server.error.NotFoundException;
+import hokutosai.server.error.UnauthorizedException;
 import hokutosai.server.error.response.ErrorResponse;
 import hokutosai.server.log.AccessLogger;
+import hokutosai.server.security.auth.AccountAuthorizer;
 import hokutosai.server.security.auth.ApiUserAuthorizer;
 import hokutosai.server.security.auth.ApiUserForbiddenException;
 import hokutosai.server.security.auth.ApiUserUnauthorizedException;
+import hokutosai.server.security.auth.AuthorizationHeader;
+import hokutosai.server.security.auth.Authorizer;
+import hokutosai.server.util.EndpointPath;
 
 import java.io.IOException;
 
@@ -33,7 +43,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class HokutosaiApiFilter implements Filter {
 
 	@Autowired
+	private EndpointRepository endpointRepository;
+
+	@Autowired
 	private ApiUserAuthorizer apiUserAuthorizer;
+
+	@Autowired
+	private AccountAuthorizer accountAuthorizer;
 
 	@Autowired
 	private AccessLogger accessLogger;
@@ -51,7 +67,20 @@ public class HokutosaiApiFilter implements Filter {
 		AuthorizationApiUser apiUser = null;
 
 		try {
-			apiUser = this.apiUserAuthorizer.authorize(httpRequest);
+			Endpoint endpoint = this.acceptRequest(httpRequest);
+			AuthorizationHeader authHeader = new AuthorizationHeader(httpRequest);
+			apiUser = this.apiUserAuthorizer.authorize(authHeader.getApiUser(), endpoint);
+
+			String accountNeed = endpoint.getAccountNeed();
+			if (!accountNeed.equals("no")) {
+				if (authHeader.hasAccount()) {
+					AuthorizedAccount account = this.accountAuthorizer.authorize(authHeader.getAccount(), endpoint);
+					request.setAttribute("Account", account);
+				} else if (accountNeed.equals("required")) {
+					throw new UnauthorizedException("Account is required to access to the endpoint.");
+				}
+			}
+
 			chain.doFilter(request, response);
 			this.accessLogger.access(new AccessLog(httpRequest, apiUser, HttpStatus.valueOf(((HttpServletResponse)response).getStatus())));
 		}
@@ -64,6 +93,18 @@ public class HokutosaiApiFilter implements Filter {
 		catch (Throwable e) {
 			this.handleException(e, httpRequest, response, apiUser);
 		}
+	}
+
+	private Endpoint acceptRequest(HttpServletRequest request) throws NotFoundException, ForbiddenException {
+		EndpointPath path = new EndpointPath(request.getRequestURI());
+		Endpoint endpoint = this.endpointRepository.findByPathAndMethod(path.toString(), request.getMethod());
+		if (endpoint == null) throw new NotFoundException("The endpoint does not exist.");
+
+		if (Authorizer.isAllow(endpoint.getCategory())) {
+			return endpoint;
+		}
+
+		throw new ForbiddenException("Access is not allowed.");
 	}
 
 	private void handleException(Throwable threw, HttpServletRequest httpRequest, ServletResponse response, AuthorizationApiUser apiUser) {
