@@ -27,7 +27,7 @@ public class Endpoint {
 	@JoinColumn(name = "category", insertable = false, updatable = false)
 	private EndpointCategory category;
 
-	@Column(name = "requiredAccount")
-	private Boolean requiredAccount;
+	@Column(name = "account_need")
+	private String accountNeed;
 
 }
