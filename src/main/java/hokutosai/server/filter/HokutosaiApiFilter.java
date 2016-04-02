@@ -70,6 +70,7 @@ public class HokutosaiApiFilter implements Filter {
 			Endpoint endpoint = this.acceptRequest(httpRequest);
 			AuthorizationHeader authHeader = new AuthorizationHeader(httpRequest);
 			apiUser = this.apiUserAuthorizer.authorize(authHeader.getApiUser(), endpoint);
+			request.setAttribute("ApiUser", apiUser);
 
 			String accountNeed = endpoint.getAccountNeed();
 			if (!accountNeed.equals("no")) {
