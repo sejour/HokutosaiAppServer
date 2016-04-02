@@ -21,6 +21,22 @@ public class AccountAuthorizer extends Authorizer {
 	@Autowired
 	private EndpointAccountPermissionRepository endpointPermissionRepository;
 
+	public AuthorizedAccount loginAuthorize(String accountId, String password) throws AccountUnauthorizedException, AccountForbiddenException {
+		Account account = this.accountRepository.findByAccountId(accountId);
+		if (account == null) {
+			throw new AccountUnauthorizedException(accountId);
+		}
+
+		if (account.getAccountId().equals(accountId) && account.getPassword().equals(password)) {
+			if (isAllow(account.getRole()) && isAllow(account)) {
+				return new AuthorizedAccount(account);
+			}
+			throw new AccountForbiddenException(account);
+		}
+
+		throw new AccountUnauthorizedException(accountId);
+	}
+
 	public AuthorizedAccount authorize(AccountCredentials credentials, Endpoint endpoint) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		if (credentials == null || endpoint == null) throw new InternalServerErrorException("Credentials is null");
 
