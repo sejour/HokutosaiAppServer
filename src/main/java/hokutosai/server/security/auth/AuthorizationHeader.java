@@ -15,6 +15,10 @@ public class AuthorizationHeader {
 	@Getter
 	private AccountCredentials account;
 
+	public boolean hasAccount() {
+		return this.account != null;
+	}
+
 	public AuthorizationHeader(HttpServletRequest request) throws UnauthorizedException, BadRequestException {
 		this(request.getHeader("Authorization"));
 	}
