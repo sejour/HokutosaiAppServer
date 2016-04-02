@@ -1,52 +1,31 @@
 package hokutosai.server.security.auth;
 
-import javax.servlet.http.HttpServletRequest;
-
 import hokutosai.server.data.document.auth.AuthorizationApiUser;
+import hokutosai.server.data.entity.Endpoint;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.entity.auth.ApiUserRole;
-import hokutosai.server.data.entity.auth.EndpointPermission;
+import hokutosai.server.data.entity.auth.EndpointApiUserPermission;
 import hokutosai.server.data.repository.auth.ApiUserRepository;
-import hokutosai.server.data.repository.auth.EndpointPermissionRepository;
-import hokutosai.server.error.BadRequestException;
+import hokutosai.server.data.repository.auth.EndpointApiUserPermissionRepository;
+import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
-import hokutosai.server.error.UnauthorizedException;
-import hokutosai.server.util.EndpointPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ApiUserAuthorizer {
-
-	private static final String PERMISSION_ALLOW = "allow";
+public class ApiUserAuthorizer extends Authorizer {
 
 	@Autowired
 	private ApiUserRepository apiUserRepository;
 
 	@Autowired
-	private EndpointPermissionRepository endpointPermissionRepository;
+	private EndpointApiUserPermissionRepository endpointPermissionRepository;
 
-	public AuthorizationApiUser authorize(HttpServletRequest request) throws UnauthorizedException, BadRequestException, ApiUserForbiddenException, NotFoundException {
+	public AuthorizationApiUser authorize(ApiUserCredentials credentials, Endpoint endpoint) throws InternalServerErrorException, ApiUserUnauthorizedException, NotFoundException, ApiUserForbiddenException {
+		if (credentials == null) throw new InternalServerErrorException("ApiUserCredentials is null");
 
-		String authorizationHeader = request.getHeader("Authorization");
-		if (authorizationHeader == null) {
-			throw new UnauthorizedException("Authorization header does not exist.");
-		}
-
-		String[] credentials = authorizationHeader.split(",");
-		if (credentials.length != 2) {
-			throw new BadRequestException("Bad format of credentials.");
-		}
-
-		String[] userIdValues = credentials[0].split("=");
-		String[] accessTokenValues = credentials[1].split("=");
-		if (userIdValues.length != 2 || accessTokenValues.length != 2 || !userIdValues[0].equals("user_id") || !accessTokenValues[0].equals("access_token")) {
-			throw new BadRequestException("Bad format of credentials.");
-		}
-
-		String userId = userIdValues[1];
-		String accessToken = accessTokenValues[1];
+		String userId = credentials.getId();
 
 		ApiUser apiUser = apiUserRepository.findByUserId(userId);
 		if (apiUser == null) {
@@ -54,18 +33,15 @@ public class ApiUserAuthorizer {
 		}
 
 		ApiUserRole role = apiUser.getRole();
-
-		String uri = request.getRequestURI();
-		String method = request.getMethod();
 		String roleName = role.getRole();
-		EndpointPath path = new EndpointPath(uri);
-		EndpointPermission endpoint = this.endpointPermissionRepository.findByPathAndMethodAndRole(path.toString(), method, roleName);
-		if (endpoint == null) {
+
+		EndpointApiUserPermission endpointPermission = this.endpointPermissionRepository.findByPathAndMethodAndRole(endpoint.getPath(), endpoint.getMethod(), roleName);
+		if (endpointPermission == null) {
 			throw new NotFoundException("The endpoint does not exist.");
 		}
 
-		if (userId.equals(apiUser.getUserId()) && accessToken.equals(apiUser.getAccessToken())) {
-			if (role.getPermission().equals(PERMISSION_ALLOW) && apiUser.getPermission().equals(PERMISSION_ALLOW) && endpoint.getCategory().getPermission().equals(PERMISSION_ALLOW) && endpoint.getPermission().equals(PERMISSION_ALLOW)) {
+		if (apiUser.getUserId().equals(userId) && apiUser.getAccessToken().equals(credentials.getAccessToken())) {
+			if (isAllow(role) && isAllow(apiUser) && isAllow(endpointPermission)) {
 				return new AuthorizationApiUser(userId, roleName);
 			}
 			throw new ApiUserForbiddenException(new AuthorizationApiUser(userId, roleName));
