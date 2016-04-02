@@ -23,7 +23,7 @@ public class ApiUserAuthorizer extends Authorizer {
 	private EndpointApiUserPermissionRepository endpointPermissionRepository;
 
 	public AuthorizationApiUser authorize(ApiUserCredentials credentials, Endpoint endpoint) throws InternalServerErrorException, ApiUserUnauthorizedException, NotFoundException, ApiUserForbiddenException {
-		if (credentials == null) throw new InternalServerErrorException("ApiUserCredentials is null");
+		if (credentials == null || endpoint == null) throw new InternalServerErrorException("Credentials is null");
 
 		String userId = credentials.getId();
 
