@@ -21,8 +21,8 @@ public class AccountsController {
 	AccountAuthorizer accountAuthorizer;
 
 	@RequestMapping(value = "/auth", method = RequestMethod.GET)
-	public AuthorizedAccount postAuth(@RequestParam("id") String id, @RequestParam("password") String password) throws AccountUnauthorizedException, AccountForbiddenException {
-		return this.accountAuthorizer.authorize(id, password);
+	public AuthorizedAccount postAuth(@RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException {
+		return this.accountAuthorizer.loginAuthorize(id, password);
 	}
 
 }
