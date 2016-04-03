@@ -21,4 +21,9 @@ public class AccessErrorLog extends AccessLog {
 		this.exception = new ExceptionError(e);
 	}
 
+	public AccessErrorLog(HttpServletRequest request, AuthorizationTarget apiUser, AuthorizationTarget account,org.springframework.http.HttpStatus httpStatus, Throwable e) {
+		super(request, apiUser, httpStatus);
+		this.exception = new ExceptionError(e);
+	}
+
 }

@@ -34,6 +34,10 @@ public class AccessLog {
 	@Getter
 	private AuthorizationTarget apiUser;
 
+	@Field("account")
+	@Getter
+	private AuthorizationTarget account;
+
 	@Field("status")
 	@Getter
 	private HttpStatus status;
@@ -43,6 +47,15 @@ public class AccessLog {
 		this.uri = request.getRequestURI();
 		this.method = request.getMethod();
 		this.apiUser = apiUser;
+		this.status = new HttpStatus(httpStatus);
+	}
+
+	public AccessLog(HttpServletRequest request, AuthorizationTarget apiUser, AuthorizationTarget account, org.springframework.http.HttpStatus httpStatus) {
+		this.date = new Date();
+		this.uri = request.getRequestURI();
+		this.method = request.getMethod();
+		this.apiUser = apiUser;
+		this.account = account;
 		this.status = new HttpStatus(httpStatus);
 	}
 
