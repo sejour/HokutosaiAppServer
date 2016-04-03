@@ -1,6 +1,8 @@
 package hokutosai.server.data.entity;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -11,10 +13,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @MappedSuperclass
 @Data
-public class Assess {
+public abstract class Assess {
 
 	@Id
-	@Column(name = "id", nullable = false)
+	@Column(name = "id") @GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonIgnore
 	private Integer id;
 
@@ -24,6 +26,13 @@ public class Assess {
 
 	@Column(name = "score", nullable = false)
 	@JsonProperty("score")
-	private String score;
+	private Integer score;
+
+	public Assess() {}
+
+	public Assess(String accountId, Integer score) {
+		this.accountId = accountId;
+		this.score = score;
+	}
 
 }
