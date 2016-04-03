@@ -5,7 +5,7 @@ import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.error.UnauthorizedException;
 
 @SuppressWarnings("serial")
-public class AccountUnauthorizedException extends UnauthorizedException {
+public class AccountUnauthorizedException extends UnauthorizedException implements AuthorizationAccount {
 
 	@Getter
 	private AuthorizationTarget account;
