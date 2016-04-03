@@ -8,6 +8,7 @@ import hokutosai.server.data.document.log.AccessErrorLog;
 import hokutosai.server.data.document.log.AccessLog;
 import hokutosai.server.data.repository.log.AccessErrorLogRepository;
 import hokutosai.server.data.repository.log.AccessLogRepository;
+import hokutosai.server.util.RequestAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,13 +28,13 @@ public class AccessLogger {
 		AuthorizationTarget account = null;
 		HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
 
-		Object apiUserAttribute = request.getAttribute("apiUser");
+		Object apiUserAttribute = request.getAttribute(RequestAttribute.API_USER);
 		if (apiUserAttribute != null) apiUser = (AuthorizationTarget)apiUserAttribute;
 
-		Object accountAttribute = request.getAttribute("account");
+		Object accountAttribute = request.getAttribute(RequestAttribute.ACCOUNT);
 		if (accountAttribute != null) account = (AuthorizationTarget)accountAttribute;
 
-		Object error = request.getAttribute("Error");
+		Object error = request.getAttribute(RequestAttribute.ERROR);
 		if (error == null) {
 			this.accessLogRepository.save(new AccessLog(request, apiUser, account, httpStatus));
 		}
