@@ -1,17 +1,18 @@
 package hokutosai.server.security.auth;
 
 import lombok.Getter;
+import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.error.UnauthorizedException;
 
 @SuppressWarnings("serial")
 public class AccountUnauthorizedException extends UnauthorizedException {
 
 	@Getter
-	private String accountId;
+	private AuthorizationTarget account;
 
-	public AccountUnauthorizedException(String accountId) {
+	public AccountUnauthorizedException(AuthorizationTarget account) {
 		super("ID or password is incorrect.");
-		this.accountId = accountId;
+		this.account = account;
 	}
 
 }

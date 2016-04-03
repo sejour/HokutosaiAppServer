@@ -1,5 +1,6 @@
 package hokutosai.server.security.auth;
 
+import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.data.entity.Endpoint;
 import hokutosai.server.data.entity.account.Account;
 import hokutosai.server.data.entity.account.AccountRole;
@@ -24,17 +25,17 @@ public class AccountAuthorizer extends Authorizer {
 	public AuthorizedAccount loginAuthorize(String accountId, String password) throws AccountUnauthorizedException, AccountForbiddenException {
 		Account account = this.accountRepository.findByAccountId(accountId);
 		if (account == null) {
-			throw new AccountUnauthorizedException(accountId);
+			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 		}
 
 		if (account.getAccountId().equals(accountId) && account.getPassword().equals(password)) {
 			if (isAllow(account.getRole()) && isAllow(account)) {
 				return new AuthorizedAccount(account);
 			}
-			throw new AccountForbiddenException(account);
+			throw new AccountForbiddenException(new AuthorizationTarget(accountId));
 		}
 
-		throw new AccountUnauthorizedException(accountId);
+		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 	}
 
 	public AuthorizedAccount authorize(AccountCredentials credentials, Endpoint endpoint) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
@@ -44,7 +45,7 @@ public class AccountAuthorizer extends Authorizer {
 
 		Account account = this.accountRepository.findByAccountId(accountId);
 		if (account == null) {
-			throw new AccountUnauthorizedException(accountId);
+			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 		}
 
 		AccountRole role = account.getRole();
@@ -59,10 +60,10 @@ public class AccountAuthorizer extends Authorizer {
 			if (isAllow(role) && isAllow(account) && isAllow(endpointPermission)) {
 				return new AuthorizedAccount(account);
 			}
-			throw new AccountForbiddenException(account);
+			throw new AccountForbiddenException(new AuthorizationTarget(accountId));
 		}
 
-		throw new AccountUnauthorizedException(accountId);
+		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 	}
 
 }
