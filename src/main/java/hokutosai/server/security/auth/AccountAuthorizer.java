@@ -30,14 +30,16 @@ public class AccountAuthorizer extends Authorizer {
 			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 		}
 
+		AccountRole role = account.getRole();
+
 		if (account.getAccountId().equals(accountId) && account.getPassword().equals(password)) {
-			if (isAllow(account.getRole()) && isAllow(account)) {
+			if (isAllow(role) && isAllow(account)) {
 				return new AuthorizedAccount(account);
 			}
-			throw new AccountForbiddenException(new AuthorizationTarget(accountId));
+			throw new AccountForbiddenException(new AuthorizationTarget(accountId, role.getRole()));
 		}
 
-		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
+		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId, role.getRole()));
 	}
 
 	public AuthorizedAccount authorize(AccountCredentials credentials, Endpoint endpoint) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
