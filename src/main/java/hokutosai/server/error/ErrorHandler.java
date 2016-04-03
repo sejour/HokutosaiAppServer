@@ -32,4 +32,12 @@ public class ErrorHandler {
 		return new ErrorResponse(status, status.is5xxServerError() ? null : threw.getMessage());
 	}
 
+	public static ErrorResponse handle(Throwable threw, ServletRequest request, HttpStatus status) {
+		if (threw == null) { return null; }
+
+		request.setAttribute(RequestAttribute.ERROR, threw);
+
+		return new ErrorResponse(status, status.is5xxServerError() ? null : threw.getMessage());
+	}
+
 }
