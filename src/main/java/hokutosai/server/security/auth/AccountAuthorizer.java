@@ -22,7 +22,9 @@ public class AccountAuthorizer extends Authorizer {
 	@Autowired
 	private EndpointAccountPermissionRepository endpointPermissionRepository;
 
-	public AuthorizedAccount loginAuthorize(String accountId, String password) throws AccountUnauthorizedException, AccountForbiddenException {
+	public AuthorizedAccount loginAuthorize(String accountId, String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
+		if (accountId == null || password == null) throw new InternalServerErrorException("Credentials is null");
+
 		Account account = this.accountRepository.findByAccountId(accountId);
 		if (account == null) {
 			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
