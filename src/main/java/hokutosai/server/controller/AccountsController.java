@@ -1,6 +1,7 @@
 package hokutosai.server.controller;
 
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.security.auth.AccountAuthorizer;
 import hokutosai.server.security.auth.AccountForbiddenException;
 import hokutosai.server.security.auth.AccountUnauthorizedException;
@@ -21,7 +22,7 @@ public class AccountsController {
 	AccountAuthorizer accountAuthorizer;
 
 	@RequestMapping(value = "/auth", method = RequestMethod.GET)
-	public AuthorizedAccount postAuth(@RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException {
+	public AuthorizedAccount postAuth(@RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		return this.accountAuthorizer.loginAuthorize(id, password);
 	}
 
