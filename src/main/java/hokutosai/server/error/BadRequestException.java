@@ -9,7 +9,7 @@ public class BadRequestException extends HokutosaiServerException {
 		super(HttpStatus.BAD_REQUEST, message);
 	}
 
-	public BadRequestException(String httpMethod, String uri, String message, Throwable nested) {
+	public BadRequestException(String message,  Throwable nested) {
 		super(HttpStatus.BAD_REQUEST, message, nested);
 	}
 
