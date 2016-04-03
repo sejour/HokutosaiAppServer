@@ -62,10 +62,10 @@ public class AccountAuthorizer extends Authorizer {
 			if (isAllow(role) && isAllow(account) && isAllow(endpointPermission)) {
 				return new AuthorizedAccount(account);
 			}
-			throw new AccountForbiddenException(new AuthorizationTarget(accountId));
+			throw new AccountForbiddenException(new AuthorizationTarget(accountId, roleName));
 		}
 
-		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
+		throw new AccountUnauthorizedException(new AuthorizationTarget(accountId, roleName));
 	}
 
 }
