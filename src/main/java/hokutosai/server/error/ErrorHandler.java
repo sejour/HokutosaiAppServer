@@ -11,6 +11,18 @@ import org.springframework.http.HttpStatus;
 
 public class ErrorHandler {
 
+	public static ErrorResponse handle(HokutosaiServerException threw, ServletRequest request) {
+		if (threw == null) { return null; }
+
+		HttpStatus status = threw.getHttpStatus();
+		if (threw instanceof AuthorizationApiUserException) request.setAttribute(RequestAttribute.API_USER, ((AuthorizationApiUserException)threw).getApiUser());
+		else if (threw instanceof AuthorizationAccountException) request.setAttribute(RequestAttribute.ACCOUNT, ((AuthorizationAccountException)threw).getAccount());
+
+		request.setAttribute(RequestAttribute.ERROR, threw);
+
+		return new ErrorResponse(status, status.is5xxServerError() ? null : threw.getMessage());
+	}
+
 	public static ErrorResponse handle(Throwable threw, ServletRequest request) {
 		if (threw == null) { return null; }
 
