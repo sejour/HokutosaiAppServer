@@ -1,6 +1,6 @@
 package hokutosai.server.data.document.log;
 
-import hokutosai.server.data.document.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.auth.AuthorizationTarget;
 
 import java.util.Date;
 
@@ -32,13 +32,13 @@ public class AccessLog {
 
 	@Field("apiUser")
 	@Getter
-	private AuthorizationApiUser apiUser;
+	private AuthorizationTarget apiUser;
 
 	@Field("status")
 	@Getter
 	private HttpStatus status;
 
-	public AccessLog(HttpServletRequest request, AuthorizationApiUser apiUser, org.springframework.http.HttpStatus httpStatus) {
+	public AccessLog(HttpServletRequest request, AuthorizationTarget apiUser, org.springframework.http.HttpStatus httpStatus) {
 		this.date = new Date();
 		this.uri = request.getRequestURI();
 		this.method = request.getMethod();

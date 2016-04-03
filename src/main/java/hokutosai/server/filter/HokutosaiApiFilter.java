@@ -1,6 +1,6 @@
 package hokutosai.server.filter;
 
-import hokutosai.server.data.document.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.data.document.log.AccessErrorLog;
 import hokutosai.server.data.document.log.AccessLog;
 import hokutosai.server.data.entity.Endpoint;
@@ -64,7 +64,7 @@ public class HokutosaiApiFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		AuthorizationApiUser apiUser = null;
+		AuthorizationTarget apiUser = null;
 
 		try {
 			Endpoint endpoint = this.acceptRequest(httpRequest);
@@ -108,7 +108,7 @@ public class HokutosaiApiFilter implements Filter {
 		throw new ForbiddenException("Access is not allowed.");
 	}
 
-	private void handleException(Throwable threw, HttpServletRequest httpRequest, ServletResponse response, AuthorizationApiUser apiUser) {
+	private void handleException(Throwable threw, HttpServletRequest httpRequest, ServletResponse response, AuthorizationTarget apiUser) {
 		if (threw == null) { return; }
 
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;

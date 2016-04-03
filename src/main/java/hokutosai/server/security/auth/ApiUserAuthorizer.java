@@ -1,6 +1,6 @@
 package hokutosai.server.security.auth;
 
-import hokutosai.server.data.document.auth.AuthorizationApiUser;
+import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.data.entity.Endpoint;
 import hokutosai.server.data.entity.auth.ApiUser;
 import hokutosai.server.data.entity.auth.ApiUserRole;
@@ -22,14 +22,14 @@ public class ApiUserAuthorizer extends Authorizer {
 	@Autowired
 	private EndpointApiUserPermissionRepository endpointPermissionRepository;
 
-	public AuthorizationApiUser authorize(ApiUserCredentials credentials, Endpoint endpoint) throws InternalServerErrorException, ApiUserUnauthorizedException, NotFoundException, ApiUserForbiddenException {
+	public AuthorizationTarget authorize(ApiUserCredentials credentials, Endpoint endpoint) throws InternalServerErrorException, ApiUserUnauthorizedException, NotFoundException, ApiUserForbiddenException {
 		if (credentials == null || endpoint == null) throw new InternalServerErrorException("Credentials is null");
 
 		String userId = credentials.getId();
 
 		ApiUser apiUser = apiUserRepository.findByUserId(userId);
 		if (apiUser == null) {
-			throw new ApiUserUnauthorizedException(new AuthorizationApiUser(userId));
+			throw new ApiUserUnauthorizedException(new AuthorizationTarget(userId));
 		}
 
 		ApiUserRole role = apiUser.getRole();
@@ -42,12 +42,12 @@ public class ApiUserAuthorizer extends Authorizer {
 
 		if (apiUser.getUserId().equals(userId) && apiUser.getAccessToken().equals(credentials.getAccessToken())) {
 			if (isAllow(role) && isAllow(apiUser) && isAllow(endpointPermission)) {
-				return new AuthorizationApiUser(userId, roleName);
+				return new AuthorizationTarget(userId, roleName);
 			}
-			throw new ApiUserForbiddenException(new AuthorizationApiUser(userId, roleName));
+			throw new ApiUserForbiddenException(new AuthorizationTarget(userId, roleName));
 		}
 
-		throw new ApiUserUnauthorizedException(new AuthorizationApiUser(userId, roleName));
+		throw new ApiUserUnauthorizedException(new AuthorizationTarget(userId, roleName));
 	}
 
 }
