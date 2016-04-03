@@ -22,7 +22,7 @@ public class AccessErrorLog extends AccessLog {
 	}
 
 	public AccessErrorLog(HttpServletRequest request, AuthorizationTarget apiUser, AuthorizationTarget account,org.springframework.http.HttpStatus httpStatus, Throwable e) {
-		super(request, apiUser, httpStatus);
+		super(request, apiUser, account, httpStatus);
 		this.exception = new ExceptionError(e);
 	}
 
