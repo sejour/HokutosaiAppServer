@@ -3,6 +3,7 @@ package hokutosai.server.error;
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.error.response.ErrorResponse;
+import hokutosai.server.security.auth.AuthorizationAccountException;
 
 import org.springframework.http.HttpStatus;
 
@@ -17,10 +18,14 @@ public class ErrorHandler {
 			if (e instanceof HokutosaiServerException) {
 				HokutosaiServerException hse = (HokutosaiServerException)e;
 				status = hse.getHttpStatus();
+				if (hse instanceof AuthorizationAccountException) request.setAttribute("Account", ((AuthorizationAccountException)hse).getAccount());
+
 				threw = e;
 				break;
 			}
 		}
+
+
 
 		request.setAttribute("Error", threw);
 

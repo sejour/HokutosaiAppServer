@@ -5,7 +5,7 @@ import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.error.ForbiddenException;
 
 @SuppressWarnings("serial")
-public class AccountForbiddenException extends ForbiddenException implements AuthorizationAccount {
+public class AccountForbiddenException extends ForbiddenException implements AuthorizationAccountException {
 
 	@Getter
 	private AuthorizationTarget account;
