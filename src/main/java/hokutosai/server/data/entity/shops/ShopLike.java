@@ -16,4 +16,11 @@ public class ShopLike extends Like {
 	@Getter @Setter
 	private Integer shopId;
 
+	public ShopLike() {}
+
+	public ShopLike(Integer shopId, String accountId) {
+		super(accountId);
+		this.shopId = shopId;
+	}
+
 }
