@@ -13,8 +13,6 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @MappedSuperclass
 @Data
@@ -44,11 +42,14 @@ public abstract class Shop {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
 	@JsonProperty("assessment_aggregate")
-	@Getter @Setter
 	private ShopScore assessmentAggregate;
 
 	@Transient
 	@JsonProperty("liked")
 	private boolean liked;
+
+	@Column(name = "likes_count")
+	@JsonProperty("likes_count")
+	private  Integer likesCount;
 
 }
