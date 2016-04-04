@@ -23,6 +23,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Table(name = "shops")
 public class DetailedShop extends Shop {
 
+	@Column(name = "likes_count")
+	@JsonProperty("likes_count")
+	@Getter @Setter
+	private  Integer likesCount;
+
 	@Column(name = "introduction")
 	@JsonProperty("introduction")
 	@Getter @Setter
