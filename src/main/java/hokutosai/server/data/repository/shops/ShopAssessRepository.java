@@ -16,6 +16,6 @@ public interface ShopAssessRepository extends JpaRepository<ShopAssess, Integer>
 	@Modifying
 	@Transactional
 	@Query("UPDATE ShopAssess a SET a.score = :score WHERE a.accountId = :accountId AND a.shopId = :shopId")
-	public void updateAssess(@Param("accountId") Integer accountId, @Param("shopId") Integer shopId, @Param("score") Integer score);
+	public void updateAssess(@Param("accountId") String accountId, @Param("shopId") Integer shopId, @Param("score") Integer score);
 
 }
