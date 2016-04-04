@@ -43,9 +43,9 @@ public abstract class Shop {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
-	@JsonProperty("assessed_score")
+	@JsonProperty("assessment_aggregate")
 	@Getter @Setter
-	private ShopScore assessedScore;
+	private ShopScore assessmentAggregate;
 
 	@Transient
 	@JsonProperty("liked")
