@@ -1,5 +1,8 @@
 package hokutosai.server.controller;
 
+import hokutosai.server.data.json.system.Config;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/system")
 public class HokutosaiApiController {
 
-	 @RequestMapping("/hello")
-	 public String hello() {
-	     return "Hello HokutosaiAPI";
-	 }
+	@Autowired
+	private Config config;
+
+	@RequestMapping("/config")
+	public Config get() {
+		return this.config;
+	}
 
 }
