@@ -24,8 +24,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
-import com.sun.corba.se.impl.io.TypeMismatchException;
-
 @ControllerAdvice
 public class ExceptionControllerAdvice {
 
@@ -46,13 +44,6 @@ public class ExceptionControllerAdvice {
 	@ExceptionHandler(ServletRequestBindingException.class)
 	@ResponseBody
     public ResponseEntity<ErrorResponse> exception(HttpServletRequest request, ServletRequestBindingException e) {
-		ErrorResponse error = ErrorHandler.handle(e, request, HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(error, error.getHttpStatus());
-    }
-
-	@ExceptionHandler(TypeMismatchException.class)
-	@ResponseBody
-    public ResponseEntity<ErrorResponse> exception(HttpServletRequest request, TypeMismatchException e) {
 		ErrorResponse error = ErrorHandler.handle(e, request, HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(error, error.getHttpStatus());
     }
