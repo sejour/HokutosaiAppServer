@@ -1,6 +1,8 @@
 package hokutosai.server.data.entity;
 
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.error.InvalidParameterValueException;
+import hokutosai.server.security.ParamValidator;
 
 import java.util.Date;
 
@@ -23,6 +25,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @MappedSuperclass
 @Data
 public abstract class Assess {
+
+	private static final int SCORE_MIN = 1;
+	private static final int SCORE_MAX = 5;
+	private static final int COMMENT_LENGTH_MAX = 140;
 
 	@Id
 	@Column(name = "id") @GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,11 +59,11 @@ public abstract class Assess {
 
 	public Assess() {}
 
-	public Assess(String accountId, Date datetime, Integer score, String comment) {
+	public Assess(String accountId, Date datetime, Integer score, String comment) throws InvalidParameterValueException {
 		this.accountId = accountId;
 		this.datetime = datetime;
-		this.score = score;
-		this.comment = comment;
+		this.score = ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
+		this.comment = ParamValidator.text("comment", comment, COMMENT_LENGTH_MAX);
 	}
 
 }
