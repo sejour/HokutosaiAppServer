@@ -139,19 +139,33 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "/likes/{id:^[0-9]+$}", method = RequestMethod.POST)
-	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId, @RequestParam("enable") Boolean enable) throws NotFoundException, InternalServerErrorException {
+	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
 
 		String accountId = RequestAttribute.getRequiredAccount(request).getId();
-
-		if (!enable) return shop;
 
 		if (this.shopLikeRepository.findByShopIdAndAccountId(shopId, accountId) == null) {
 			this.shopLikeRepository.save(new ShopLike(shopId, accountId));
 		}
 
 		shop.setLiked(true);
+		return shop;
+	}
+
+	@RequestMapping(value = "/likes/{id:^[0-9]+$}", method = RequestMethod.DELETE)
+	public SimpleShop deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
+		if (shop == null) throw new NotFoundException("The id is not used.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, accountId);
+		if (like != null) {
+			this.shopLikeRepository.delete(like.getId());
+		}
+
+		shop.setLiked(false);
 		return shop;
 	}
 
