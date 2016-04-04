@@ -1,5 +1,7 @@
 package hokutosai.server.controller;
 
+import java.util.Date;
+
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.shops.DetailedShop;
@@ -75,7 +77,8 @@ public class ShopsApiController {
 	public ShopScore postAssessWithId(
 			ServletRequest request,
 			@PathVariable("id") Integer shopId,
-			@RequestParam("score") Integer score
+			@RequestParam("score") Integer score,
+			@RequestParam("comment") String comment
 		) throws NotFoundException, InvalidParameterValueException, InternalServerErrorException
 	{
 		ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
@@ -84,11 +87,12 @@ public class ShopsApiController {
 
 		ShopAssess myAssess = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
 
+		Date datetime = new Date();
 		if (myAssess == null) {
-			this.shopAssessRepository.save(new ShopAssess(shopId, accountId, score));
+			this.shopAssessRepository.save(new ShopAssess(shopId, accountId, datetime, score, comment));
 			this.shopScoreRepository.assess(shopId, score);
 		} else {
-			this.shopAssessRepository.updateAssess(accountId, shopId, score);
+			this.shopAssessRepository.updateAssess(accountId, shopId, datetime, score, comment);
 			this.shopScoreRepository.reassess(shopId, score, myAssess.getScore());
 		}
 
