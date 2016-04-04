@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javax.servlet.ServletRequest;
 
+import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
@@ -82,7 +84,7 @@ public class ShopsApiController {
 	private static final int COMMENT_LENGTH_MAX = 140;
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
-	public ShopScore postAssessWithId(
+	public ShopAssessmentResponse postAssessWithId(
 			ServletRequest request,
 			@PathVariable("id") Integer shopId,
 			@RequestParam("score") Integer score,
@@ -96,18 +98,21 @@ public class ShopsApiController {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 		String accountId = account.getId();
 
-		ShopAssess myAssess = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
+		ShopAssess myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
 
 		Date datetime = new Date();
-		if (myAssess == null) {
+		if (myAssessment == null) {
 			this.shopAssessRepository.save(new ShopAssess(shopId, accountId, datetime, score, comment));
 			this.shopScoreRepository.assess(shopId, score);
 		} else {
 			this.shopAssessRepository.updateAssess(accountId, shopId, datetime, score, comment);
-			this.shopScoreRepository.reassess(shopId, score, myAssess.getScore());
+			this.shopScoreRepository.reassess(shopId, score, myAssessment.getScore());
 		}
 
-		return this.shopScoreRepository.findByShopId(shopId);
+		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
+		myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
+
+		return new ShopAssessmentResponse(shopId, myAssessment, aggregate);
 	}
 
 }
