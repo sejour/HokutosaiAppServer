@@ -48,6 +48,7 @@ public class DetailedShop extends Shop {
 
 	@Transient
 	@JsonProperty("my_assessment")
+	@Getter @Setter
 	private ShopAssess myAssessment;
 
 }
