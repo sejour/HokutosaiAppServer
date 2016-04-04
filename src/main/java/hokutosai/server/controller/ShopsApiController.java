@@ -81,7 +81,9 @@ public class ShopsApiController {
 			@RequestParam("comment") String comment
 		) throws NotFoundException, InvalidParameterValueException, InternalServerErrorException
 	{
+		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 		ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
+
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 		String accountId = account.getId();
 
