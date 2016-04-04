@@ -98,21 +98,20 @@ public class ShopsApiController {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 		String accountId = account.getId();
 
-		ShopAssess myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
+		ShopAssess newAssessment = new ShopAssess(shopId, accountId, new Date(), score, comment);
+		ShopAssess oldAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
 
-		Date datetime = new Date();
-		if (myAssessment == null) {
-			this.shopAssessRepository.save(new ShopAssess(shopId, accountId, datetime, score, comment));
+		if (oldAssessment == null) {
+			this.shopAssessRepository.save(newAssessment);
 			this.shopScoreRepository.assess(shopId, score);
 		} else {
-			this.shopAssessRepository.updateAssess(accountId, shopId, datetime, score, comment);
-			this.shopScoreRepository.reassess(shopId, score, myAssessment.getScore());
+			this.shopAssessRepository.updateAssess(newAssessment.getAccountId(), newAssessment.getShopId(), newAssessment.getDatetime(), newAssessment.getScore(), newAssessment.getComment());
+			this.shopScoreRepository.reassess(shopId, score, oldAssessment.getScore());
 		}
 
 		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
-		myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
 
-		return new ShopAssessmentResponse(shopId, myAssessment, aggregate);
+		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
 	}
 
 }
