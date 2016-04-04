@@ -1,11 +1,16 @@
 package hokutosai.server.data.entity;
 
+import hokutosai.server.data.entity.account.SecureAccount;
+
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,9 +29,10 @@ public abstract class Assess {
 	@JsonIgnore
 	private Integer id;
 
-	@Column(name = "account_id", nullable = false)
-	@JsonIgnore
-	private String accountId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "account_id", insertable = false, updatable = false)
+	@JsonProperty("user")
+	private SecureAccount user;
 
 	@Column(name = "datetime", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
