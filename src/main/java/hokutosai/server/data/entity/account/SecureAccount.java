@@ -19,8 +19,8 @@ public class SecureAccount {
 	@JsonProperty("account_id")
 	private String accountId;
 
-	@Column(name = "user_name")
-	@JsonProperty("name")
+	@Column(name = "name")
+	@JsonProperty("user_name")
 	private String name;
 
 	@Column(name = "media_url")
