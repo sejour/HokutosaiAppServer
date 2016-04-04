@@ -57,9 +57,16 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "/details/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public DetailedShop getDetailsById(@PathVariable Integer id) throws NotFoundException {
-		DetailedShop result = this.detailedShopRepository.findByShopId(id);
+	public DetailedShop getDetailsById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
 		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			ShopAssess myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setMyAssessment(myAssessment);
+		}
+
 		return result;
 	}
 
