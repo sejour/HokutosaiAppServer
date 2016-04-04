@@ -1,5 +1,7 @@
 package hokutosai.server.data.entity.shops;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -22,8 +24,8 @@ public class ShopAssess extends Assess {
 
 	public ShopAssess() {}
 
-	public ShopAssess(Integer shopId, String accountId, Integer score) {
-		super(accountId, score);
+	public ShopAssess(Integer shopId, String accountId, Date datetime, Integer score, String comment) {
+		super(accountId, datetime, score, comment);
 		this.shopId = shopId;
 	}
 
