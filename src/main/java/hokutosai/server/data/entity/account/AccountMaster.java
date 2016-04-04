@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "accounts")
-public class Account extends Permission {
+public class AccountMaster extends Permission {
 
 	@Id
 	@Column(name = "account_id")

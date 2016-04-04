@@ -2,11 +2,11 @@ package hokutosai.server.security.auth;
 
 import hokutosai.server.data.document.auth.AuthorizationTarget;
 import hokutosai.server.data.entity.Endpoint;
-import hokutosai.server.data.entity.account.Account;
+import hokutosai.server.data.entity.account.AccountMaster;
 import hokutosai.server.data.entity.account.AccountRole;
 import hokutosai.server.data.entity.account.EndpointAccountPermission;
 import hokutosai.server.data.json.account.AuthorizedAccount;
-import hokutosai.server.data.repository.account.AccountRepository;
+import hokutosai.server.data.repository.account.AccountMasterRepository;
 import hokutosai.server.data.repository.account.EndpointAccountPermissionRepository;
 import hokutosai.server.error.InternalServerErrorException;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class AccountAuthorizer extends Authorizer {
 
 	@Autowired
-	private AccountRepository accountRepository;
+	private AccountMasterRepository accountRepository;
 
 	@Autowired
 	private EndpointAccountPermissionRepository endpointPermissionRepository;
@@ -25,7 +25,7 @@ public class AccountAuthorizer extends Authorizer {
 	public AuthorizedAccount loginAuthorize(String accountId, String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		if (accountId == null || password == null) throw new InternalServerErrorException("Credentials is null");
 
-		Account account = this.accountRepository.findByAccountId(accountId);
+		AccountMaster account = this.accountRepository.findByAccountId(accountId);
 		if (account == null) {
 			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 		}
@@ -47,7 +47,7 @@ public class AccountAuthorizer extends Authorizer {
 
 		String accountId = credentials.getId();
 
-		Account account = this.accountRepository.findByAccountId(accountId);
+		AccountMaster account = this.accountRepository.findByAccountId(accountId);
 		if (account == null) {
 			throw new AccountUnauthorizedException(new AuthorizationTarget(accountId));
 		}
