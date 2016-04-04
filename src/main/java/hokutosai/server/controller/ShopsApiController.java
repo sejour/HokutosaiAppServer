@@ -54,21 +54,11 @@ public class ShopsApiController {
 		return result;
 	}
 
-	@RequestMapping(value = "/details", method = RequestMethod.GET)
-	public Iterable<DetailedShop> getDetails() {
-	    return this.detailedShopRepository.findAll();
-	}
-
 	@RequestMapping(value = "/details/{id:^[0-9]+$}", method = RequestMethod.GET)
 	public DetailedShop getDetailsById(@PathVariable Integer id) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
-	}
-
-	@RequestMapping(value = "/assess", method = RequestMethod.GET)
-	public Iterable<ShopScore> getAssess() throws NotFoundException {
-		return this.shopScoreRepository.findAll();
 	}
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.GET)
