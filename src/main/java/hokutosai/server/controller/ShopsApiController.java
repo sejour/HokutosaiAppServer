@@ -120,8 +120,7 @@ public class ShopsApiController {
 	{
 		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 
-		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
-		String accountId = account.getId();
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
 
 		ShopAssess newAssessment = new ShopAssess(shopId, accountId, new Date(), score, comment);
 		ShopAssess oldAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
@@ -137,6 +136,23 @@ public class ShopsApiController {
 		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
 
 		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
+	}
+
+	@RequestMapping(value = "/likes/{id:^[0-9]+$}", method = RequestMethod.POST)
+	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId, @RequestParam("enable") Boolean enable) throws NotFoundException, InternalServerErrorException {
+		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
+		if (shop == null) throw new NotFoundException("The id is not used.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		if (!enable) return shop;
+
+		if (this.shopLikeRepository.findByShopIdAndAccountId(shopId, accountId) == null) {
+			this.shopLikeRepository.save(new ShopLike(shopId, accountId));
+		}
+
+		shop.setLiked(true);
+		return shop;
 	}
 
 }
