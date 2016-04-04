@@ -1,18 +1,23 @@
 package hokutosai.server.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
+import hokutosai.server.data.entity.shops.ShopLike;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
+import hokutosai.server.data.repository.shops.ShopLikeRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
 import hokutosai.server.error.InternalServerErrorException;
@@ -45,15 +50,40 @@ public class ShopsApiController {
 	@Autowired
 	private ShopAssessRepository shopAssessRepository;
 
+	@Autowired
+	private ShopLikeRepository shopLikeRepository;
+
 	@RequestMapping(method = RequestMethod.GET)
-	public Iterable<SimpleShop> get() {
-	    return this.simpleShopRepository.findAll();
+	public List<SimpleShop> get(ServletRequest request) {
+	    List<SimpleShop> results = this.simpleShopRepository.findAll();
+
+	    AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account == null) return results;
+
+	    List<ShopLike> likes = this.shopLikeRepository.findByAccountId(account.getId());
+	    Map<Integer, ShopLike> likesMap = new HashMap<Integer, ShopLike>();
+
+	    for (ShopLike like: likes) {
+	    	likesMap.put(like.getShopId(), like);
+	    }
+	    for (SimpleShop shop: results) {
+	    	shop.setLiked(likesMap.containsKey(shop.getShopId()));
+	    }
+
+	    return results;
 	}
 
 	@RequestMapping(value = "{id:^[0-9]+$}", method = RequestMethod.GET)
-	public SimpleShop getById(@PathVariable Integer id) throws NotFoundException {
-		SimpleShop result = this.simpleShopRepository.findByShopId(id);
+	public SimpleShop getById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		SimpleShop result = this.simpleShopRepository.findByShopId(shopId);
 		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setLiked(like != null);
+		}
+
 		return result;
 	}
 
@@ -66,6 +96,8 @@ public class ShopsApiController {
 		if (account != null) {
 			ShopAssess myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
 			result.setMyAssessment(myAssessment);
+			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setLiked(like != null);
 		}
 
 		return result;
