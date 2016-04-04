@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,10 @@ public class DetailedShop extends Shop {
 	@JsonProperty("score")
 	@Getter @Setter
 	private ShopScore assessdScore;
+
+	@Transient
+	@JsonProperty("my_assess")
+	private ShopAssess myAssess;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
