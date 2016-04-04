@@ -29,6 +29,10 @@ public abstract class Assess {
 	@JsonIgnore
 	private Integer id;
 
+	@Column(name = "account_id", nullable = false)
+	@JsonIgnore
+	private String accountId;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "account_id", insertable = false, updatable = false)
 	@JsonProperty("user")
