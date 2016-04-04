@@ -72,6 +72,7 @@ public class ShopsApiController {
 
 	private static final int SCORE_MIN = 1;
 	private static final int SCORE_MAX = 5;
+	private static final int COMMENT_LENGTH_MAX = 140;
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
 	public ShopScore postAssessWithId(
@@ -83,6 +84,7 @@ public class ShopsApiController {
 	{
 		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 		ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
+		ParamValidator.text("comment", comment, COMMENT_LENGTH_MAX);
 
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 		String accountId = account.getId();
@@ -98,9 +100,7 @@ public class ShopsApiController {
 			this.shopScoreRepository.reassess(shopId, score, myAssess.getScore());
 		}
 
-		ShopScore result = this.shopScoreRepository.findByShopId(shopId);
-		if (result == null) throw new NotFoundException("The id is not used.");
-		return result;
+		return this.shopScoreRepository.findByShopId(shopId);
 	}
 
 }
