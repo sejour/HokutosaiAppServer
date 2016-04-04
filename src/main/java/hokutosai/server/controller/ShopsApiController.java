@@ -1,14 +1,21 @@
 package hokutosai.server.controller;
 
+import javax.servlet.ServletRequest;
+
 import hokutosai.server.data.entity.shops.DetailedShop;
+import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
+import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
+import hokutosai.server.data.repository.shops.ShopAssessRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
+import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.InvalidParameterValueException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.security.ParamValidator;
+import hokutosai.server.util.RequestAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -31,6 +38,9 @@ public class ShopsApiController {
 
 	@Autowired
 	private ShopScoreRepository shopScoreRepository;
+
+	@Autowired
+	private ShopAssessRepository shopAssessRepository;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Iterable<SimpleShop> get() {
@@ -73,21 +83,26 @@ public class ShopsApiController {
 
 	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
 	public ShopScore postAssessWithId(
-			@PathVariable Integer id,
-			@RequestParam("score") Integer score,
-			@RequestParam(value = "previous_score", required = false) Integer previousScore
-		) throws NotFoundException, InvalidParameterValueException
+			ServletRequest request,
+			@PathVariable("id") Integer shopId,
+			@RequestParam("score") Integer score
+		) throws NotFoundException, InvalidParameterValueException, InternalServerErrorException
 	{
 		ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+		String accountId = account.getId();
 
-		if (previousScore == null) {
-			this.shopScoreRepository.assess(id, score);
+		ShopAssess myAssess = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
+
+		if (myAssess == null) {
+			this.shopAssessRepository.save(new ShopAssess(shopId, accountId, score));
+			this.shopScoreRepository.assess(shopId, score);
 		} else {
-			ParamValidator.range("previous_score", previousScore, SCORE_MIN, SCORE_MAX);
-			this.shopScoreRepository.reassess(id, score, previousScore);
+			this.shopAssessRepository.updateAssess(accountId, shopId, score);
+			this.shopScoreRepository.reassess(shopId, score, myAssess.getScore());
 		}
 
-		ShopScore result = this.shopScoreRepository.findByShopId(id);
+		ShopScore result = this.shopScoreRepository.findByShopId(shopId);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
 	}
