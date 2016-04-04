@@ -1,5 +1,7 @@
 package hokutosai.server.data.repository.shops;
 
+import java.util.Date;
+
 import javax.transaction.Transactional;
 
 import hokutosai.server.data.entity.shops.ShopAssess;
@@ -15,7 +17,7 @@ public interface ShopAssessRepository extends JpaRepository<ShopAssess, Integer>
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE ShopAssess a SET a.score = :score WHERE a.accountId = :accountId AND a.shopId = :shopId")
-	public void updateAssess(@Param("accountId") String accountId, @Param("shopId") Integer shopId, @Param("score") Integer score);
+	@Query("UPDATE ShopAssess a SET a.datetime = :datetime, a.score = :score, a.comment = :comment WHERE a.accountId = :accountId AND a.shopId = :shopId")
+	public void updateAssess(@Param("accountId") String accountId, @Param("shopId") Integer shopId, @Param("datetime") Date datetime, @Param("score") Integer score, @Param("comment") String comment);
 
 }
