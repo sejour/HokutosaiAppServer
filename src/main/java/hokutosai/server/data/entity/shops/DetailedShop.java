@@ -36,13 +36,17 @@ public class DetailedShop extends Shop {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
-	@JsonProperty("score")
+	@JsonProperty("assess")
 	@Getter @Setter
 	private ShopScore assessdScore;
 
 	@Transient
-	@JsonProperty("my_assess")
-	private ShopAssess myAssess;
+	@JsonProperty("my_score")
+	private Integer myScore;
+
+	@Transient
+	@JsonProperty("liked")
+	private boolean liked;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
