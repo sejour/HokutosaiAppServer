@@ -1,14 +1,20 @@
 package hokutosai.server.data.entity.shops;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
 @Data
@@ -34,5 +40,15 @@ public abstract class Shop {
 	@Column(name = "image_url")
 	@JsonProperty("image_url")
 	private String imageUrl;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
+	@JsonProperty("assessed_score")
+	@Getter @Setter
+	private ShopScore assessedScore;
+
+	@Transient
+	@JsonProperty("liked")
+	private boolean liked;
 
 }
