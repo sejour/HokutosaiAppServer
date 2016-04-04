@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShopLikeRepository extends JpaRepository<ShopLike, Integer> {
 
-	public ShopLike findByShopIdAndAccountId(String shopId, String accountId);
+	public ShopLike findByShopIdAndAccountId(Integer shopId, String accountId);
 
 }
