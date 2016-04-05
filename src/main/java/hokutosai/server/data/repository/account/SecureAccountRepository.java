@@ -14,6 +14,6 @@ public interface SecureAccountRepository extends JpaRepository<SecureAccount, St
 	@Modifying
 	@Transactional
 	@Query("UPDATE SecureAccount a SET a.name = :name WHERE a.accountId = :accountId")
-	public void updateName(@Param("accountId") Integer accountId, @Param("name") String userName);
+	public void updateName(@Param("accountId") String accountId, @Param("name") String userName);
 
 }
