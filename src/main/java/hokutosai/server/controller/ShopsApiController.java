@@ -74,7 +74,7 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "{id:^[0-9]+$}", method = RequestMethod.GET)
-	public SimpleShop getById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+	public SimpleShop get(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		SimpleShop result = this.simpleShopRepository.findByShopId(shopId);
 		if (result == null) throw new NotFoundException("The id is not used.");
 
@@ -87,8 +87,8 @@ public class ShopsApiController {
 		return result;
 	}
 
-	@RequestMapping(value = "/details/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public DetailedShop getDetailsById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
+	public DetailedShop getDetails(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
 		if (result == null) throw new NotFoundException("The id is not used.");
 
@@ -103,15 +103,15 @@ public class ShopsApiController {
 		return result;
 	}
 
-	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.GET)
-	public ShopScore getAssessById(@PathVariable Integer id) throws NotFoundException {
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.GET)
+	public ShopScore getAssessment(@PathVariable Integer id) throws NotFoundException {
 		ShopScore result = this.shopScoreRepository.findByShopId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
 	}
 
-	@RequestMapping(value = "/assess/{id:^[0-9]+$}", method = RequestMethod.POST)
-	public ShopAssessmentResponse postAssessWithId(
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.POST)
+	public ShopAssessmentResponse postAssessment(
 			ServletRequest request,
 			@PathVariable("id") Integer shopId,
 			@RequestParam("score") Integer score,
@@ -138,7 +138,7 @@ public class ShopsApiController {
 		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
 	}
 
-	@RequestMapping(value = "/likes/{id:^[0-9]+$}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
 	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
@@ -155,7 +155,7 @@ public class ShopsApiController {
 		return shop;
 	}
 
-	@RequestMapping(value = "/likes/{id:^[0-9]+$}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
 	public SimpleShop deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
