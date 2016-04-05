@@ -1,9 +1,10 @@
 package hokutosai.server.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.repository.account.SecureAccountRepository;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.security.auth.AccountAuthorizer;
 import hokutosai.server.security.auth.AccountForbiddenException;
@@ -25,11 +26,26 @@ public class AccountsController {
 	@Autowired
 	AccountAuthorizer accountAuthorizer;
 
+	@Autowired
+	SecureAccountRepository secureAccountRepository;
+
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
-	public SecureAccount postAuth(HttpServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
+	public SecureAccount postAuth(ServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		AuthorizedAccount account = this.accountAuthorizer.loginAuthorize(id, password);
 		request.setAttribute(RequestAttribute.ACCOUNT, account);
 		return new SecureAccount(account);
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/profile", method = RequestMethod.POST)
+	public SecureAccount postProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		this.secureAccountRepository.updateName(account.getId(), userName);
+
+		SecureAccount secure = new SecureAccount(account);
+		secure.setName(userName);
+
+		return secure;
 	}
 
 }
