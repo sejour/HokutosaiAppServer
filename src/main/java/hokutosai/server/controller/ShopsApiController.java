@@ -148,6 +148,7 @@ public class ShopsApiController {
 		if (this.shopLikeRepository.findByShopIdAndAccountId(shopId, accountId) == null) {
 			this.shopLikeRepository.save(new ShopLike(shopId, accountId));
 			this.detailedShopRepository.incrementLikesCount(shopId);
+			shop.setLikesCount(shop.getLikesCount() + 1);
 		}
 
 		shop.setLiked(true);
@@ -165,6 +166,7 @@ public class ShopsApiController {
 		if (like != null) {
 			this.shopLikeRepository.delete(like.getId());
 			this.detailedShopRepository.decrementLikesCount(shopId);
+			shop.setLikesCount(shop.getLikesCount() - 1);
 		}
 
 		shop.setLiked(false);
