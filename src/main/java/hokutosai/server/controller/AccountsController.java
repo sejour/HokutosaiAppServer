@@ -2,6 +2,7 @@ package hokutosai.server.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.security.auth.AccountAuthorizer;
@@ -25,10 +26,10 @@ public class AccountsController {
 	AccountAuthorizer accountAuthorizer;
 
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
-	public AuthorizedAccount postAuth(HttpServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
+	public SecureAccount postAuth(HttpServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		AuthorizedAccount account = this.accountAuthorizer.loginAuthorize(id, password);
 		request.setAttribute(RequestAttribute.ACCOUNT, account);
-		return account;
+		return new SecureAccount(account);
 	}
 
 }
