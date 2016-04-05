@@ -36,7 +36,7 @@ public class AccountsController {
 		return new SecureAccount(account);
 	}
 
-	@RequestMapping(value = "/{id:^[0-9]+$}/profile", method = RequestMethod.POST)
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
 	public SecureAccount postProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 
