@@ -59,8 +59,9 @@ public abstract class Assess {
 
 	public Assess() {}
 
-	public Assess(String accountId, Date datetime, Integer score, String comment) throws InvalidParameterValueException {
-		this.accountId = accountId;
+	public Assess(SecureAccount account, Date datetime, Integer score, String comment) throws InvalidParameterValueException {
+		this.accountId = account.getAccountId();
+		this.user = account;
 		this.datetime = datetime;
 		this.score = ParamValidator.range("score", score, SCORE_MIN, SCORE_MAX);
 		this.comment = ParamValidator.text("comment", comment, COMMENT_LENGTH_MAX);

@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.AssessedScore;
+import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopLike;
@@ -120,10 +121,10 @@ public class ShopsApiController {
 	{
 		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 
-		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 
-		ShopAssess newAssessment = new ShopAssess(shopId, accountId, new Date(), score, comment);
-		ShopAssess oldAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, accountId);
+		ShopAssess newAssessment = new ShopAssess(shopId, new SecureAccount(account), new Date(), score, comment);
+		ShopAssess oldAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
 
 		if (oldAssessment == null) {
 			this.shopAssessRepository.save(newAssessment);

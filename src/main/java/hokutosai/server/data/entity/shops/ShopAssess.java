@@ -12,6 +12,7 @@ import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import hokutosai.server.data.entity.Assess;
+import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.error.InvalidParameterValueException;
 
 @Entity
@@ -25,8 +26,8 @@ public class ShopAssess extends Assess {
 
 	public ShopAssess() {}
 
-	public ShopAssess(Integer shopId, String accountId, Date datetime, Integer score, String comment) throws InvalidParameterValueException {
-		super(accountId, datetime, score, comment);
+	public ShopAssess(Integer shopId, SecureAccount account, Date datetime, Integer score, String comment) throws InvalidParameterValueException {
+		super(account, datetime, score, comment);
 		this.shopId = shopId;
 	}
 
