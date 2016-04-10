@@ -21,7 +21,7 @@ public class Media {
 	@JsonProperty("media_id")
 	private Integer mediaId;
 
-	@Column(name = "url", nullable = false)
+	@Column(name = "url")
 	@JsonProperty("url")
 	private String url;
 
@@ -31,8 +31,7 @@ public class Media {
 
 	public Media() { }
 
-	public Media(String url, String type) {
-		this.url = url;
+	public Media(String type) {
 		this.type = type;
 	}
 
