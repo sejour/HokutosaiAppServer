@@ -1,12 +1,16 @@
 package hokutosai.server.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 
 import hokutosai.server.config.MediaConfiguration;
+import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.News;
+import hokutosai.server.data.entity.news.NewsWithMedia;
 import hokutosai.server.data.repository.news.NewsRepository;
+import hokutosai.server.data.repository.news.NewsWithMediaRepository;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.security.ParamValidator;
 
@@ -30,11 +34,26 @@ public class NewsApiController {
 	@Autowired
 	private NewsRepository newsRepository;
 
+	@Autowired
+	private NewsWithMediaRepository newsWithMediaRepository;
+
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public News postArticle(@RequestBody @Valid News news, Errors errors) throws BadRequestException {
 		ParamValidator.checkErrors(errors);
 		news.setDatetime(new Date());
-		return this.newsRepository.save(news);
+
+		News result = this.newsRepository.save(news);
+		Integer newsId = result.getNewsId();
+
+		List<Media> medias = news.getMedias();
+		if (medias != null) {
+			int sequence = 0;
+			for (Media media: medias) {
+				this.newsWithMediaRepository.save(new NewsWithMedia(newsId, media.getMediaId(), ++sequence));
+			}
+		}
+
+		return result;
 	}
 
 }
