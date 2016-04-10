@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import hokutosai.server.config.MediaConfiguration;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.io.FileUtil;
 import hokutosai.server.media.Photo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,20 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/media")
 public class MediaApiController {
 
-	@Value("${hokutosai.server.media.saveDirectory}")
-	private String saveDirectory;
-
-	@Value("${hokutosai.server.media.maxMediaSize}")
-	private Long maxMediaSize;
-
-	@Value("${hokutosai.server.media.minTotalResolution}")
-	private Integer minTotalResolution;
-
-	@Value("${hokutosai.server.media.extension}")
-	private String[] mediaExtension;
-
-	@Value("${hokutosai.server.media.url}")
-	private String mediaUrl;
+	@Autowired
+	private MediaConfiguration mediaConfigure;
 
 	@Autowired
 	private MediaRepository mediaRepository;
@@ -55,10 +43,11 @@ public class MediaApiController {
         	String ext = this.getMediaExtension(media);
         	Photo photo = new Photo(media, ext);
 
-        	Long fileSize = media.getSize();
-        	if (fileSize > this.maxMediaSize) {
-        		Photo resized = photo.resize((double)this.maxMediaSize / (double)fileSize);
-        		if (resized.getTotalResolution() >= this.minTotalResolution) {
+        	Long mediaSize = media.getSize();
+        	Long maxMediaSize = this.mediaConfigure.getMaxMediaSize();
+        	if (mediaSize > maxMediaSize) {
+        		Photo resized = photo.resize((double)maxMediaSize / (double)mediaSize);
+        		if (resized.getTotalResolution() >= this.mediaConfigure.getMinTotalResolution()) {
         			photo = resized;
         		}
         	}
@@ -78,7 +67,7 @@ public class MediaApiController {
 	private String getMediaExtension(MultipartFile media) throws BadRequestException {
 		String ext = FileUtil.getExtension(media.getOriginalFilename());
 
-    	for (String valid: this.mediaExtension) {
+    	for (String valid: this.mediaConfigure.getMediaExtension()) {
     		if (valid.equalsIgnoreCase(ext)) return ext;
     	}
 
@@ -94,12 +83,12 @@ public class MediaApiController {
 		String fileName = String.format("%s-%d.%s", mediaType, mediaId, media.getExtension());
 
 		// Write
-		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(String.format("%s%s", this.saveDirectory, fileName)));
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(String.format("%s%s", this.mediaConfigure.getSaveDirectory(), fileName)));
 		media.write(out);
 
 		// Regist url
 		reservedMedia.setFileName(fileName);
-		reservedMedia.setUrl(String.format("%s%s", this.mediaUrl, fileName));
+		reservedMedia.setUrl(String.format("%s%s", this.mediaConfigure.getMediaUrl(), fileName));
 		this.mediaRepository.registUrl(mediaId, reservedMedia.getUrl());
 
 		return reservedMedia;
