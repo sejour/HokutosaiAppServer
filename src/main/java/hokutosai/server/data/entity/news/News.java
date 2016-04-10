@@ -17,6 +17,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -34,6 +37,7 @@ public class News {
 
 	@Column(name = "title", nullable = false)
 	@JsonProperty("title")
+	@NotBlank
 	private String title;
 
 	@Column(name = "datetime", nullable = false)
@@ -54,7 +58,8 @@ public class News {
 	private Integer exhibitionId;
 
 	@Column(name = "topic", nullable = false)
-	@JsonProperty("title")
+	@JsonProperty("topic")
+	@NotNull
 	private Boolean isTopic;
 
 	@Column(name = "tag")
@@ -63,6 +68,7 @@ public class News {
 
 	@Column(name = "text", nullable = false)
 	@JsonProperty("text")
+	@NotBlank
 	private String text;
 
 	@Column(name = "likes_count", insertable = false)
