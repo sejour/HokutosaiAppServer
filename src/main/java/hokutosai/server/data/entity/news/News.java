@@ -5,14 +5,11 @@ import hokutosai.server.data.entity.media.Media;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,8 +28,8 @@ import lombok.Data;
 public class News {
 
 	@Id
-	@Column(name = "media_id") @GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonProperty("media_id")
+	@Column(name = "news_id") @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonProperty("news_id")
 	private Integer newsId;
 
 	@Column(name = "title", nullable = false)
@@ -75,8 +72,7 @@ public class News {
 	@JsonProperty("likes_count")
 	private Integer likesCount;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "news_id", insertable = false, updatable = false)
+	@Transient
 	@JsonProperty("medias")
 	private List<Media> medias;
 
