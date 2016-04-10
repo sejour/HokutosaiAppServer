@@ -28,7 +28,7 @@ public class ParamValidator {
 		if (errors.hasErrors()) {
 			StringBuilder message = new StringBuilder("[");
 			for (ObjectError error : errors.getAllErrors()) {
-				message.append(String.format("%s\"%s\"", message.equals("[") ? "" : ",", error.getDefaultMessage()));
+				message.append(String.format("%s%s", message.length() == 1 ? "" : ",", error.getDefaultMessage()));
 			}
 			message.append("]");
 			throw new BadRequestException(message.toString());
