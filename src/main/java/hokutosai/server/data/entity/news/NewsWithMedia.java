@@ -1,10 +1,15 @@
 package hokutosai.server.data.entity.news;
 
+import hokutosai.server.data.entity.media.Media;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -26,6 +31,10 @@ public class NewsWithMedia {
 
 	@Column(name = "sequence", nullable = false)
 	private Integer sequence;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "media_id", insertable = false, updatable = false)
+	private Media media;
 
 	public NewsWithMedia() {}
 
