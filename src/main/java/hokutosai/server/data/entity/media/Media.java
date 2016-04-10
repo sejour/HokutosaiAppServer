@@ -25,6 +25,10 @@ public class Media {
 	@JsonProperty("url")
 	private String url;
 
+	@Column(name = "file_name")
+	@JsonProperty("name")
+	private String fileName;
+
 	@Column(name = "type", nullable = false)
 	@JsonProperty("type")
 	private String type;

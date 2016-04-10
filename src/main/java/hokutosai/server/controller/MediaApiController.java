@@ -98,6 +98,7 @@ public class MediaApiController {
 		media.write(out);
 
 		// Regist url
+		reservedMedia.setFileName(fileName);
 		reservedMedia.setUrl(String.format("%s%s", this.mediaUrl, fileName));
 		this.mediaRepository.registUrl(mediaId, reservedMedia.getUrl());
 
