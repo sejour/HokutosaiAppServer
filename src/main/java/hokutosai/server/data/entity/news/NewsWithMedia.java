@@ -24,9 +24,13 @@ public class NewsWithMedia {
 	@Column(name = "media_id", nullable = false)
 	private Integer mediaId;
 
+	@Column(name = "sequence", nullable = false)
+	private Integer sequence;
+
 	public NewsWithMedia() {}
 
-	public NewsWithMedia(Integer newsId, Integer mediaId) {
+	public NewsWithMedia(Integer newsId, Integer mediaId, Integer sequence) {
+		this.sequence = sequence;
 		this.newsId = newsId;
 		this.mediaId = mediaId;
 	}
