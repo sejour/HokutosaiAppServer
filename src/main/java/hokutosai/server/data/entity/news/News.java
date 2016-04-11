@@ -1,29 +1,23 @@
 package hokutosai.server.data.entity.news;
 
-import hokutosai.server.data.entity.media.Media;
-
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import lombok.Data;
 
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
-
-@Entity
-@Table(name = "news")
+@MappedSuperclass
 @Data
 public class News {
 
@@ -71,13 +65,5 @@ public class News {
 	@Column(name = "likes_count", insertable = false)
 	@JsonProperty("likes_count")
 	private Integer likesCount;
-
-	@Transient
-	@JsonProperty("medias")
-	private List<Media> medias;
-
-	@Transient
-	@JsonProperty("liked")
-	private boolean liked;
 
 }
