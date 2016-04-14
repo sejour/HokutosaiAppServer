@@ -137,7 +137,11 @@ public class ShopsApiController {
 	}
 	
 	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.DELETE)
-	public ShopAssessmentResponse deleteAssessment() {
+	public ShopAssessmentResponse deleteAssessment(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+		
 		return null;
 	}
 
