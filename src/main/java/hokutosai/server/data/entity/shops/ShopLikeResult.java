@@ -27,4 +27,10 @@ public class ShopLikeResult {
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
 	
+	public ShopLikeResult(Shop shop) {
+		this.shopId = shop.getShopId();
+		this.liked = shop.getLiked();
+		this.likesCount = shop.getLikesCount();
+	}
+	
 }
