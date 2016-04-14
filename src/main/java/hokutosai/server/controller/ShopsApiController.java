@@ -17,6 +17,7 @@ import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
+import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
 import hokutosai.server.data.repository.shops.ShopItemRepository;
@@ -136,7 +137,7 @@ public class ShopsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
-	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+	public ShopLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
 
@@ -148,12 +149,13 @@ public class ShopsApiController {
 			shop.setLikesCount(shop.getLikesCount() + 1);
 		}
 
-		shop.setLiked(true);
-		return shop;
+		ShopLikeResult result = new ShopLikeResult(shop);
+		result.setLiked(true);
+		return result;
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
-	public SimpleShop deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+	public ShopLikeResult deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
 
@@ -166,8 +168,9 @@ public class ShopsApiController {
 			shop.setLikesCount(shop.getLikesCount() - 1);
 		}
 
-		shop.setLiked(false);
-		return shop;
+		ShopLikeResult result = new ShopLikeResult(shop);
+		result.setLiked(false);
+		return result;
 	}
 
 }
