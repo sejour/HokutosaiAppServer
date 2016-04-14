@@ -135,6 +135,11 @@ public class ShopsApiController {
 
 		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
 	}
+	
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.DELETE)
+	public ShopAssessmentResponse deleteAssessment() {
+		return null;
+	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
 	public ShopLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
