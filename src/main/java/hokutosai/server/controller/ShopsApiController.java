@@ -11,6 +11,7 @@ import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
+import hokutosai.server.data.entity.shops.ShopItem;
 import hokutosai.server.data.entity.shops.ShopLike;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
@@ -18,6 +19,7 @@ import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
+import hokutosai.server.data.repository.shops.ShopItemRepository;
 import hokutosai.server.data.repository.shops.ShopLikeRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
@@ -44,6 +46,9 @@ public class ShopsApiController {
 
 	@Autowired
     private DetailedShopRepository detailedShopRepository;
+	
+	@Autowired
+	private ShopItemRepository shopItemRepository;
 
 	@Autowired
 	private ShopScoreRepository shopScoreRepository;
@@ -74,6 +79,11 @@ public class ShopsApiController {
 	    return results;
 	}
 
+	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
+	public List<ShopItem> getEnumeration() {
+		return this.shopItemRepository.findAll();
+	}
+	
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
 	public DetailedShop getDetails(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
