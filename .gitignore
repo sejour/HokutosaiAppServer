@@ -4,3 +4,4 @@
 .gradle
 bin
 build
+src/main/resources/config/application-release.properties
