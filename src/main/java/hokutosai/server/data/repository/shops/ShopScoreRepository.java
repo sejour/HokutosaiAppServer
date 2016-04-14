@@ -24,4 +24,10 @@ public interface ShopScoreRepository extends JpaRepository<ShopScore, Integer> {
 	@Query("UPDATE ShopScore s SET s.totalScore = s.totalScore - :previousScore + :assessedScore WHERE s.shopId = :shopId")
 	public void reassess(@Param("shopId") Integer shopId, @Param("assessedScore") Integer score, @Param("previousScore") Integer previousScore);
 
+	@Modifying
+	@Transactional
+	@Query("UPDATE ShopScore s SET s.assessedCount = s.assessedCount - 1, s.totalScore = s.totalScore - :cancelScore WHERE s.shopId = :shopId")
+	public void cancelAssess(@Param("shopId") Integer shopId, @Param("cancelScore") Integer cancelScore);
+
+
 }
