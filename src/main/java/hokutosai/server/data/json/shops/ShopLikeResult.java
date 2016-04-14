@@ -1,4 +1,4 @@
-package hokutosai.server.data.entity.shops;
+package hokutosai.server.data.json.shops;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import hokutosai.server.data.entity.shops.Shop;
 
 @Entity
 @Table(name = "shops")
