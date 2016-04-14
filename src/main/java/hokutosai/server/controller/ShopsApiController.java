@@ -47,7 +47,7 @@ public class ShopsApiController {
 
 	@Autowired
     private DetailedShopRepository detailedShopRepository;
-	
+
 	@Autowired
 	private ShopItemRepository shopItemRepository;
 
@@ -84,7 +84,7 @@ public class ShopsApiController {
 	public List<ShopItem> getEnumeration() {
 		return this.shopItemRepository.findAll();
 	}
-	
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
 	public DetailedShop getDetails(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
@@ -135,14 +135,23 @@ public class ShopsApiController {
 
 		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
 	}
-	
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.DELETE)
 	public ShopAssessmentResponse deleteAssessment(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
-		
-		return null;
+
+		ShopAssess assessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+
+		if (assessment != null) {
+			this.shopScoreRepository.cancelAssess(shopId, assessment.getScore());
+			this.shopAssessRepository.delete(assessment.getId());
+		}
+
+		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
+
+		return new ShopAssessmentResponse(shopId, null, aggregate);
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
