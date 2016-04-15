@@ -2,12 +2,14 @@ package hokutosai.server.controller;
 
 import javax.servlet.ServletRequest;
 
+import hokutosai.server.data.entity.account.AccountMaster;
 import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.repository.account.SecureAccountRepository;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.security.auth.AccountAuthorizer;
 import hokutosai.server.security.auth.AccountForbiddenException;
+import hokutosai.server.security.auth.AccountGenerator;
 import hokutosai.server.security.auth.AccountUnauthorizedException;
 import hokutosai.server.util.RequestAttribute;
 
@@ -28,6 +30,14 @@ public class AccountsController {
 
 	@Autowired
 	SecureAccountRepository secureAccountRepository;
+	
+	@Autowired
+	AccountGenerator accountGenerator;
+	
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public AccountMaster getNewAccount() throws InternalServerErrorException {
+		return this.accountGenerator.issue();
+	}
 
 	@RequestMapping(value = "/authorization", method = RequestMethod.POST)
 	public SecureAccount postAuth(ServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
