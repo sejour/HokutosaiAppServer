@@ -29,7 +29,7 @@ public class AccountsController {
 	@Autowired
 	SecureAccountRepository secureAccountRepository;
 
-	@RequestMapping(value = "/auth", method = RequestMethod.POST)
+	@RequestMapping(value = "/authorization", method = RequestMethod.POST)
 	public SecureAccount postAuth(ServletRequest request, @RequestParam("account_id") String id, @RequestParam("account_pass") String password) throws AccountUnauthorizedException, AccountForbiddenException, InternalServerErrorException {
 		AuthorizedAccount account = this.accountAuthorizer.loginAuthorize(id, password);
 		request.setAttribute(RequestAttribute.ACCOUNT, account);
