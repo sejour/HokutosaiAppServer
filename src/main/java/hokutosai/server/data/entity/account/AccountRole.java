@@ -18,5 +18,12 @@ public class AccountRole extends Permission {
 	@Column(name = "role")
 	@Getter @Setter
 	private String role;
+	
+	public AccountRole() {}
+	
+	public AccountRole(String role, String permission) {
+		super(permission);
+		this.role = role;
+	}
 
 }
