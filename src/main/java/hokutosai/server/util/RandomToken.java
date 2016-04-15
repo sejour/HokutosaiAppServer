@@ -6,17 +6,14 @@ public class RandomToken {
 
 	private static final String sample = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private Random rand = new Random();
-	private int length;
 	
-	public RandomToken(int length) {
-		this.length = length;
-	}
+	public RandomToken() {}
 	
-	public String next() {
+	public String generate(int length) {
 		StringBuilder token = new StringBuilder();
 		int sampleLength = sample.length();
 		
-		for (int i = 0; i < this.length; ++i) {
+		for (int i = 0; i < length; ++i) {
 			token.append(sample.charAt(rand.nextInt(sampleLength)));
 		}
 		
