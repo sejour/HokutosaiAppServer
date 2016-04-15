@@ -12,5 +12,11 @@ public abstract class Permission {
 	@Column(name = "permission")
 	@Getter @Setter
 	private String permission;
+	
+	public Permission() { }
+	
+	public Permission(String permission) {
+		this.permission = permission;
+	}
 
 }
