@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import hokutosai.server.data.entity.account.AccountMaster;
-import hokutosai.server.data.entity.account.AccountRole;
 import hokutosai.server.data.repository.account.AccountMasterRepository;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.util.RandomToken;
@@ -35,8 +34,7 @@ public class AccountGenerator {
 
 		String pass = randToken.generate(AUTO_LOGIN_PASS_LENGTH);
 
-		AccountRole role = new AccountRole(AUTO_LOGIN_ACCOUNT_ROLE, "allow");
-		AccountMaster account = new AccountMaster(id, pass, role);
+		AccountMaster account = new AccountMaster(id, pass, AUTO_LOGIN_ACCOUNT_ROLE, "allow");
 
 		this.accountRepository.save(account);
 
