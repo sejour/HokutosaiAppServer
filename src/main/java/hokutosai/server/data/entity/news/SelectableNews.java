@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SelectableNews extends News {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
+	@JoinColumn(name = "news_id", insertable = false, updatable = false)
 	@OrderBy("sequence ASC")
 	@JsonProperty("medias")
 	@Getter @Setter
