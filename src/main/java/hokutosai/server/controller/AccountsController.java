@@ -46,6 +46,17 @@ public class AccountsController {
 		return new SecureAccount(account);
 	}
 
+	@RequestMapping(value = "/profile", method = RequestMethod.GET)
+	public SecureAccount getProfile(ServletRequest request, @RequestParam(value = "account_id", required = false) String accountId) throws InternalServerErrorException {
+		if (accountId != null) {
+			return this.secureAccountRepository.findOne(accountId);
+		}
+
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		return new SecureAccount(account);
+	}
+
 	@RequestMapping(value = "/profile", method = RequestMethod.PUT)
 	public SecureAccount putProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
