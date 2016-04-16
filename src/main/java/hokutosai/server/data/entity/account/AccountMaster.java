@@ -31,6 +31,11 @@ public class AccountMaster extends Permission {
 	@Getter @Setter
 	private String password;
 
+	@Column(name = "role")
+	@JsonIgnore
+	@Getter @Setter
+	private String roleName;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "role", insertable = false, updatable = false)
 	@JsonIgnore
@@ -46,14 +51,14 @@ public class AccountMaster extends Permission {
 	@JsonProperty("media_url")
 	@Getter @Setter
 	private String mediaUrl;
-	
+
 	public AccountMaster() { }
-	
-	public AccountMaster(String accountId, String password, AccountRole role) {
-		super("allow");
+
+	public AccountMaster(String accountId, String password, String roleName, String permission) {
+		super(permission);
 		this.accountId = accountId;
 		this.password = password;
-		this.role = role;
+		this.roleName = roleName;
 	}
 
 }
