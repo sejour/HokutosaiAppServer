@@ -33,7 +33,7 @@ public class NewsApiController {
 	private MediaConfiguration mediaConfig;
 
 	@Autowired
-	private InsertableNewsRepository newsRepository;
+	private InsertableNewsRepository insertableNewsRepository;
 
 	@Autowired
 	private NewsWithMediaRepository newsWithMediaRepository;
@@ -43,7 +43,7 @@ public class NewsApiController {
 		ParamValidator.checkErrors(errors);
 		news.setDatetime(new Date());
 
-		InsertableNews result = this.newsRepository.save(news);
+		InsertableNews result = this.insertableNewsRepository.save(news);
 		Integer newsId = result.getNewsId();
 
 		List<Media> medias = news.getMedias();
@@ -57,8 +57,8 @@ public class NewsApiController {
 		return result;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public List<SelectableNews> get() {
+	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
+	public List<SelectableNews> getDetails() {
 		return null;
 	}
 
