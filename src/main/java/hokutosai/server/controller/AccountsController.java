@@ -30,10 +30,10 @@ public class AccountsController {
 
 	@Autowired
 	SecureAccountRepository secureAccountRepository;
-	
+
 	@Autowired
 	AccountGenerator accountGenerator;
-	
+
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public AccountMaster getNewAccount() throws InternalServerErrorException {
 		return this.accountGenerator.issue();
@@ -46,8 +46,8 @@ public class AccountsController {
 		return new SecureAccount(account);
 	}
 
-	@RequestMapping(value = "/profile", method = RequestMethod.POST)
-	public SecureAccount postProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
+	@RequestMapping(value = "/profile", method = RequestMethod.PUT)
+	public SecureAccount putProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 
 		this.secureAccountRepository.updateName(account.getId(), userName);
