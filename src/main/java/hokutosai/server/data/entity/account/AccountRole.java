@@ -1,6 +1,7 @@
 package hokutosai.server.data.entity.account;
 
 import hokutosai.server.data.entity.auth.Permission;
+import hokutosai.server.data.type.PermissionEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,10 +19,10 @@ public class AccountRole extends Permission {
 	@Column(name = "role")
 	@Getter @Setter
 	private String role;
-	
+
 	public AccountRole() {}
-	
-	public AccountRole(String role, String permission) {
+
+	public AccountRole(String role, PermissionEnum permission) {
 		super(permission);
 		this.role = role;
 	}

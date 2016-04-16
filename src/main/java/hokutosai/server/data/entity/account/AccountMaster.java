@@ -1,6 +1,7 @@
 package hokutosai.server.data.entity.account;
 
 import hokutosai.server.data.entity.auth.Permission;
+import hokutosai.server.data.type.PermissionEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,7 +55,7 @@ public class AccountMaster extends Permission {
 
 	public AccountMaster() { }
 
-	public AccountMaster(String accountId, String password, String roleName, String permission) {
+	public AccountMaster(String accountId, String password, String roleName, PermissionEnum permission) {
 		super(permission);
 		this.accountId = accountId;
 		this.password = password;
