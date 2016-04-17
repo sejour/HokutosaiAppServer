@@ -66,6 +66,7 @@ public class NewsApiController {
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws Throwable {
 		ParamValidator.checkErrors(errors);
+		news.setNewsId(null);
 		news.setDatetime(new Date());
 
 		InsertableNews result = this.insertableNewsRepository.save(news);
