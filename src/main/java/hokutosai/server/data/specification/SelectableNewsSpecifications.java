@@ -6,6 +6,18 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class SelectableNewsSpecifications {
 
+	public static Specification<SelectableNews> laterThanNewsId(Integer sinceId) {
+		return sinceId == null ? null : (root, query, cb) -> {
+            return cb.greaterThanOrEqualTo(root.get("newsId"), sinceId);
+        };
+    }
+
+	public static Specification<SelectableNews> earlierThanNewsId(Integer lastId) {
+		return lastId == null ? null : (root, query, cb) -> {
+            return cb.lessThanOrEqualTo(root.get("newsId"), lastId);
+        };
+    }
+
 	public static Specification<SelectableNews> filterByEventId(Integer eventId) {
 		return eventId == null ? null : (root, query, cb) -> {
             return cb.equal(root.get("relatedEvent").get("eventId"), eventId);

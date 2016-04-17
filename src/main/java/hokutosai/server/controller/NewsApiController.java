@@ -119,7 +119,9 @@ public class NewsApiController {
 		Date lastDatetime = lastDatetimeStr == null ? null : this.datetimeConverter.stringToDate(lastDatetimeStr);
 
 		List<SelectableNews> results = this.selectableNewsRepository.findAll(Specifications
-					.where(filterByEventId(filterEventId))
+					.where(laterThanNewsId(sinceId))
+					.and(earlierThanNewsId(lastId))
+					.and(filterByEventId(filterEventId))
 					.and(filterByShopId(filterShopId))
 					.and(filterByExhibitionId(filterExhibitionId))
 				);
