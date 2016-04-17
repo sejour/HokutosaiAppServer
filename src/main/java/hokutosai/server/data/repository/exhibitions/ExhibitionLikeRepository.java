@@ -10,5 +10,5 @@ public interface ExhibitionLikeRepository extends JpaRepository<ExhibitionLike, 
 
 	public List<ExhibitionLike> findByAccountId(String accountId);
 
-	public ExhibitionLike findByExhibitionIdAndAccountId(Integer shopId, String accountId);
+	public ExhibitionLike findByExhibitionIdAndAccountId(Integer exhibitiond, String accountId);
 }

@@ -18,8 +18,8 @@ public class ExhibitionLike  extends Like{
 
 	public ExhibitionLike() {}
 
-	public ExhibitionLike(Integer shopId, String accountId) {
+	public ExhibitionLike(Integer exhibitionId, String accountId) {
 		super(accountId);
-		this.exhibitionId = shopId;
+		this.exhibitionId = exhibitionId;
 	}
 }
