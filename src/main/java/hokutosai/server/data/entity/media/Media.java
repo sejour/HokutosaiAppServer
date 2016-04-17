@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Media {
 
 	@Id
-	@Column(name = "media_id") @GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "media_id")
 	@JsonProperty("media_id")
 	@NotNull
 	private String mediaId;
