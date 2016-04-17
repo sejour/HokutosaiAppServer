@@ -28,6 +28,7 @@ import static hokutosai.server.data.specification.SelectableNewsSpecifications.*
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
@@ -123,7 +124,8 @@ public class NewsApiController {
 					.and(earlierThanNewsId(lastId))
 					.and(filterByEventId(filterEventId))
 					.and(filterByShopId(filterShopId))
-					.and(filterByExhibitionId(filterExhibitionId))
+					.and(filterByExhibitionId(filterExhibitionId)),
+					new Sort(Sort.Direction.DESC, "datetime")
 				);
 
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
