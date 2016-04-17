@@ -31,6 +31,7 @@ public class Media {
 	private Integer newsId;
 
 	@Column(name = "sequence")
+	@JsonProperty("sequence")
 	private Integer sequence;
 
 	@Column(name = "url")
