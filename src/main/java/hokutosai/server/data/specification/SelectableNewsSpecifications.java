@@ -50,4 +50,46 @@ public class SelectableNewsSpecifications {
         };
     }
 
+	public static Specification<SelectableNews> filterByTopic(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("topic")) ? null : (root, query, cb) -> {
+			return cb.isTrue(root.get("isTopic"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByOnlyEvents(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("events")) ? null : (root, query, cb) -> {
+			return cb.isNotNull(root.get("relatedEvent"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByExceptEvents(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("mainly")) ? null : (root, query, cb) -> {
+			return cb.isNull(root.get("relatedEvent"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByOnlyShops(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("shops")) ? null : (root, query, cb) -> {
+			return cb.isNotNull(root.get("relatedShop"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByExceptShops(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("mainly")) ? null : (root, query, cb) -> {
+			return cb.isNull(root.get("relatedShop"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByOnlyExhibitions(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("exhibitions")) ? null : (root, query, cb) -> {
+			return cb.isNotNull(root.get("relatedExhibition"));
+		};
+	}
+
+	public static Specification<SelectableNews> filterByExceptExhibitions(String filter) {
+		return (filter == null || !filter.equalsIgnoreCase("mainly")) ? null : (root, query, cb) -> {
+			return cb.isNull(root.get("relatedExhibition"));
+		};
+	}
+
 }

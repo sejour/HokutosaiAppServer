@@ -127,7 +127,14 @@ public class NewsApiController {
 				.and(earlierThanDatetime(lastDatetime))
 				.and(filterByEventId(filterEventId))
 				.and(filterByShopId(filterShopId))
-				.and(filterByExhibitionId(filterExhibitionId));
+				.and(filterByExhibitionId(filterExhibitionId))
+				.and(filterByTopic(filter))
+				.and(filterByOnlyEvents(filter))
+				.and(filterByExceptEvents(filter))
+				.and(filterByOnlyShops(filter))
+				.and(filterByExceptShops(filter))
+				.and(filterByOnlyExhibitions(filter))
+				.and(filterByExceptExhibitions(filter));
 
 		List<SelectableNews> results = (count == null)
 				? this.selectableNewsRepository.findAll(spec, new Sort(Sort.Direction.DESC, "datetime"))
