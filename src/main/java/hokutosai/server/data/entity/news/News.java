@@ -1,18 +1,11 @@
 package hokutosai.server.data.entity.news;
 
-import hokutosai.server.data.entity.events.EventItem;
-import hokutosai.server.data.entity.exhibitions.ExhibitionItem;
-import hokutosai.server.data.entity.shops.ShopItem;
-
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,21 +36,6 @@ public class News {
 	@JsonProperty("datetime")
 	private Date datetime;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "event_id", insertable = false, updatable = false)
-	@JsonProperty("related_event")
-	private EventItem relatedEvent;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
-	@JsonProperty("related_shop")
-	private ShopItem relatedShop;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "exhibition_id", insertable = false, updatable = false)
-	@JsonProperty("related_exhibition")
-	private ExhibitionItem relatedExhibition;
-
 	@Column(name = "topic", nullable = false)
 	@JsonProperty("topic")
 	@NotNull
@@ -71,9 +49,5 @@ public class News {
 	@JsonProperty("text")
 	@NotBlank
 	private String text;
-
-	@Column(name = "likes_count", insertable = false)
-	@JsonProperty("likes_count")
-	private Integer likesCount;
 
 }
