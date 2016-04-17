@@ -129,4 +129,22 @@ public class ExhibitionsApiController {
 
 		return new ExhibitionAssessmentResponse(exhibitionId, newAssessment, aggregate);
 	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.DELETE)
+	public ExhibitionAssessmentResponse deleteAssessment(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException, InternalServerErrorException {
+		if (!this.simpleExhibitionRepository.exists(exhibitionId)) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		ExhibitionAssess assessment = this.exhibitionAssessRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
+
+		if (assessment != null) {
+			this.exhibitionScoreRepository.cancelAssess(exhibitionId, assessment.getScore());
+			this.exhibitionAssessRepository.delete(assessment.getId());
+		}
+
+		AssessedScore aggregate = this.exhibitionScoreRepository.findByExhibitionId(exhibitionId);
+
+		return new ExhibitionAssessmentResponse(exhibitionId, null, aggregate);
+	}
 }
