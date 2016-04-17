@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "medias")
+@Data
 public class Media {
 
 	@Id
@@ -26,11 +28,9 @@ public class Media {
 
 	@Column(name = "news_id")
 	@JsonIgnore
-	@Getter @Setter
 	private Integer newsId;
 
 	@Column(name = "sequence")
-	@Getter @Setter
 	private Integer sequence;
 
 	@Column(name = "url")
