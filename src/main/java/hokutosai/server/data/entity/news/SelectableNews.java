@@ -1,6 +1,6 @@
 package hokutosai.server.data.entity.news;
 
-import hokutosai.server.data.entity.media.MediaWithNews;
+import hokutosai.server.data.entity.media.Media;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class SelectableNews extends News {
 	@OrderBy("sequence ASC")
 	@JsonProperty("medias")
 	@Getter @Setter
-	private List<MediaWithNews> medias;
+	private List<Media> medias;
 
 	@Transient
 	@JsonProperty("liked")
