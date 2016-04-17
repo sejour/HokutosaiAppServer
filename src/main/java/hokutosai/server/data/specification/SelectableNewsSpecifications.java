@@ -8,19 +8,19 @@ public class SelectableNewsSpecifications {
 
 	public static Specification<SelectableNews> filterByEventId(Integer eventId) {
 		return eventId == null ? null : (root, query, cb) -> {
-            return cb.equal(root.get("eventId"), eventId);
+            return cb.equal(root.get("relatedEvent").get("eventId"), eventId);
         };
     }
 
 	public static Specification<SelectableNews> filterByShopId(Integer shopId) {
 		return shopId == null ? null : (root, query, cb) -> {
-            return cb.equal(root.get("shopId"), shopId);
+            return cb.equal(root.get("relatedShop").get("shopId"), shopId);
         };
     }
 
 	public static Specification<SelectableNews> filterByExhibitionId(Integer exhibitionId) {
 		return exhibitionId == null ? null : (root, query, cb) -> {
-            return cb.equal(root.get("exhibitionId"), exhibitionId);
+            return cb.equal(root.get("relatedExhibition").get("exhibitionId"), exhibitionId);
         };
     }
 
