@@ -123,6 +123,8 @@ public class NewsApiController {
 		Specifications<SelectableNews> spec = Specifications
 				.where(laterThanNewsId(sinceId))
 				.and(earlierThanNewsId(lastId))
+				.and(laterThanDatetime(sinceDatetime))
+				.and(earlierThanDatetime(lastDatetime))
 				.and(filterByEventId(filterEventId))
 				.and(filterByShopId(filterShopId))
 				.and(filterByExhibitionId(filterExhibitionId));

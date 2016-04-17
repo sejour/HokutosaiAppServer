@@ -1,5 +1,7 @@
 package hokutosai.server.data.specification;
 
+import java.util.Date;
+
 import hokutosai.server.data.entity.news.SelectableNews;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -15,6 +17,18 @@ public class SelectableNewsSpecifications {
 	public static Specification<SelectableNews> earlierThanNewsId(Integer lastId) {
 		return lastId == null ? null : (root, query, cb) -> {
             return cb.lessThanOrEqualTo(root.get("newsId"), lastId);
+        };
+    }
+
+	public static Specification<SelectableNews> laterThanDatetime(Date sinceDatetime) {
+		return sinceDatetime == null ? null : (root, query, cb) -> {
+            return cb.greaterThanOrEqualTo(root.<Date>get("datetime"), sinceDatetime);
+        };
+    }
+
+	public static Specification<SelectableNews> earlierThanDatetime(Date lastDatetime) {
+		return lastDatetime == null ? null : (root, query, cb) -> {
+            return cb.lessThanOrEqualTo(root.<Date>get("datetime"), lastDatetime);
         };
     }
 
