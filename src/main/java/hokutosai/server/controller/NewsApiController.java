@@ -24,9 +24,11 @@ import hokutosai.server.error.NotFoundException;
 import hokutosai.server.security.ParamValidator;
 import hokutosai.server.util.DatetimeConverter;
 import hokutosai.server.util.RequestAttribute;
+import static hokutosai.server.data.specification.SelectableNewsSpecifications.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -116,7 +118,11 @@ public class NewsApiController {
 		Date sinceDatetime = sinceDatetimeStr == null ? null : this.datetimeConverter.stringToDate(sinceDatetimeStr);
 		Date lastDatetime = lastDatetimeStr == null ? null : this.datetimeConverter.stringToDate(lastDatetimeStr);
 
-		List<SelectableNews> results = this.selectableNewsRepository.findAll();
+		List<SelectableNews> results = this.selectableNewsRepository.findAll(Specifications
+					.where(filterByEventId(filterEventId))
+					.and(filterByShopId(filterShopId))
+					.and(filterByExhibitionId(filterExhibitionId))
+				);
 
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
 		if (account != null) {
