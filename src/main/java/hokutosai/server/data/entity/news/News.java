@@ -1,11 +1,18 @@
 package hokutosai.server.data.entity.news;
 
+import hokutosai.server.data.entity.events.EventItem;
+import hokutosai.server.data.entity.exhibitions.ExhibitionItem;
+import hokutosai.server.data.entity.shops.ShopItem;
+
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,17 +43,20 @@ public class News {
 	@JsonProperty("datetime")
 	private Date datetime;
 
-	@Column(name = "event_id")
-	@JsonProperty("event_id")
-	private Integer eventId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "event_id", insertable = false, updatable = false)
+	@JsonProperty("related_event")
+	private EventItem relatedEvent;
 
-	@Column(name = "shop_id")
-	@JsonProperty("shop_id")
-	private Integer shopId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
+	@JsonProperty("related_shop")
+	private ShopItem relatedShop;
 
-	@Column(name = "exhibition_id")
-	@JsonProperty("exhibition_id")
-	private Integer exhibitionId;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "exhibition_id", insertable = false, updatable = false)
+	@JsonProperty("related_exhibition")
+	private ExhibitionItem relatedExhibition;
 
 	@Column(name = "topic", nullable = false)
 	@JsonProperty("topic")
