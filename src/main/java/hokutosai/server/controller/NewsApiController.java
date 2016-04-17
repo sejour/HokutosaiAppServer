@@ -66,6 +66,13 @@ public class NewsApiController {
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws Throwable {
 		ParamValidator.checkErrors(errors);
+
+		int relationCount = 0;
+		if (news.getEventId() != null) ++relationCount;
+		if (news.getShopId() != null) ++relationCount;
+		if (news.getExhibitionId() != null) ++relationCount;
+		if (relationCount > 1) throw new BadRequestException("It is not possible to register multiple relations.");
+
 		news.setNewsId(null);
 		news.setDatetime(new Date());
 
