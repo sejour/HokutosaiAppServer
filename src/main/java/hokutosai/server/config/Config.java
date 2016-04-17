@@ -1,4 +1,4 @@
-package hokutosai.server.data.json.system;
+package hokutosai.server.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

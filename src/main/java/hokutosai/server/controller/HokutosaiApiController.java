@@ -1,6 +1,6 @@
 package hokutosai.server.controller;
 
-import hokutosai.server.data.json.system.Config;
+import hokutosai.server.config.Config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
