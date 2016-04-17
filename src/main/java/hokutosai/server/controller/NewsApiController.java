@@ -1,7 +1,6 @@
 package hokutosai.server.controller;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +14,6 @@ import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
-import hokutosai.server.data.entity.shops.ShopLike;
-import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
