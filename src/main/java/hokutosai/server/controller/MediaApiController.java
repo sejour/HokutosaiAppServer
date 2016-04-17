@@ -75,7 +75,7 @@ public class MediaApiController {
 	}
 
 	private String getMediaExtension(MultipartFile media) throws BadRequestException {
-		String ext = FileUtil.getExtension(media.getOriginalFilename());
+		String ext = FileUtil.getExtension(media.getOriginalFilename()).toLowerCase();
 
     	for (String valid: this.mediaConfigure.getMediaExtension()) {
     		if (valid.equalsIgnoreCase(ext)) return ext;
