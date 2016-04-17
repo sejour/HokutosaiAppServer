@@ -38,7 +38,7 @@ public class MediaApiController {
 	private static final int ISSUE_MEDIA_ID_MAX_RETRY_COUNT = 100;
 
 	@RequestMapping(method = RequestMethod.POST)
-	public List<hokutosai.server.data.entity.media.Media> postMedia(@RequestParam("media") List<MultipartFile> files) throws BadRequestException, IOException {
+	public List<hokutosai.server.data.entity.media.Media> postMedia(@RequestParam("media") List<MultipartFile> files) throws BadRequestException, IOException, InternalServerErrorException {
         if (files.isEmpty()) throw new BadRequestException("Medias are not exist.");
 
         // Media生成/リサイズ
@@ -61,10 +61,14 @@ public class MediaApiController {
         	medias.add(photo);
         }
 
+        // ID発行
+        String rootId = this.issueMediaRootId();
+
         // 書き込み
         List<hokutosai.server.data.entity.media.Media> results = new ArrayList<hokutosai.server.data.entity.media.Media>();
-        for (hokutosai.server.media.Media media: medias) {
-        	results.add(this.writeMedia(media));
+        int mediaCount = medias.size();
+        for (int i = 0; i < mediaCount; ++i) {
+        	results.add(this.writeMedia(rootId, i, medias.get(i)));
         }
 
         return results;
@@ -92,24 +96,19 @@ public class MediaApiController {
 		return id;
 	}
 
-	private hokutosai.server.data.entity.media.Media writeMedia(hokutosai.server.media.Media media) throws IOException {
+	private hokutosai.server.data.entity.media.Media writeMedia(String rootId, int sequence, hokutosai.server.media.Media media) throws IOException {
+		String mediaId = String.format("%s%s", rootId, sequence == 0 ? "" : String.format("+%d", sequence));
+		String fileName = String.format("%s.%s", mediaId, media.getExtension());
+		String url = String.format("%s%s", this.mediaConfigure.getMediaUrl(), fileName);
 		String mediaType = media.getMediaType();
 
-		// Reserve writing.
-		hokutosai.server.data.entity.media.Media reservedMedia = this.mediaRepository.save(new hokutosai.server.data.entity.media.Media(mediaType));
-		Integer mediaId = reservedMedia.getMediaId();
-		String fileName = String.format("%s-%d.%s", mediaType, mediaId, media.getExtension());
+		hokutosai.server.data.entity.media.Media mediaEntity = new hokutosai.server.data.entity.media.Media(mediaId, sequence, url, fileName, mediaType);
+		hokutosai.server.data.entity.media.Media result = this.mediaRepository.save(mediaEntity);
 
-		// Write
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(String.format("%s%s", this.mediaConfigure.getSaveDirectory(), fileName)));
 		media.write(out);
 
-		// Regist url
-		reservedMedia.setFileName(fileName);
-		reservedMedia.setUrl(String.format("%s%s", this.mediaConfigure.getMediaUrl(), fileName));
-		this.mediaRepository.registUrl(mediaId, reservedMedia.getUrl());
-
-		return reservedMedia;
+		return result;
 	}
 
 }
