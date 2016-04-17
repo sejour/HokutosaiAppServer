@@ -52,18 +52,27 @@ public class NewsApiController {
 	private MediaRepository mediaRepository;
 
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
-	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws BadRequestException {
+	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws Throwable {
 		ParamValidator.checkErrors(errors);
 		news.setDatetime(new Date());
 
 		InsertableNews result = this.insertableNewsRepository.save(news);
 		Integer newsId = result.getNewsId();
 
-		List<Media> medias = news.getMedias();
-		if (medias != null) {
-			for (Media media: medias) {
-				this.mediaRepository.link(media.getMediaId(), newsId);
+		try {
+			List<Media> medias = news.getMedias();
+			if (medias != null) {
+				for (Media media: medias) {
+					String mediaId = media.getMediaId();
+					Media target = this.mediaRepository.findOne(mediaId);
+					if (target == null) throw new BadRequestException(String.format("The media has not been uploaded. [media_id=%s]", mediaId));
+					if (target.getNewsId() != null) throw new BadRequestException(String.format("The media is already linked another news. [media_id=%s]", mediaId));
+					this.mediaRepository.link(mediaId, newsId);
+				}
 			}
+		} catch (Throwable e) {
+			this.insertableNewsRepository.delete(newsId);
+			throw new Throwable(e);
 		}
 
 		return result;
