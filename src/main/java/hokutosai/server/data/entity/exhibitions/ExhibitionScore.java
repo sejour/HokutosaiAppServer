@@ -16,5 +16,5 @@ public class ExhibitionScore  extends AssessedScore{
 	@Id
 	@Column(name = "exhibition_id")
 	@JsonIgnore
-	private Integer ExhibitionId;
+	private Integer exhibitionId;
 }

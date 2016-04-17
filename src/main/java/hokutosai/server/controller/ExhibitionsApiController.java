@@ -1,5 +1,6 @@
 package hokutosai.server.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,19 +12,26 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hokutosai.server.data.entity.AssessedScore;
+import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.entity.exhibitions.DetailedExhibition;
 import hokutosai.server.data.entity.exhibitions.ExhibitionAssess;
 import hokutosai.server.data.entity.exhibitions.ExhibitionItem;
 import hokutosai.server.data.entity.exhibitions.ExhibitionLike;
 import hokutosai.server.data.entity.exhibitions.SimpleExhibition;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.json.exhibitions.ExhibitionAssessmentResponse;
 import hokutosai.server.data.repository.exhibitions.DetailedExhibitionRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionItemRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionLikeRepository;
+import hokutosai.server.data.repository.exhibitions.ExhibitionScoreRepository;
 import hokutosai.server.data.repository.exhibitions.SimpleExhibitionRepository;
+import hokutosai.server.error.InternalServerErrorException;
+import hokutosai.server.error.InvalidParameterValueException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.util.RequestAttribute;
 
@@ -46,6 +54,12 @@ public class ExhibitionsApiController {
 
 	@Autowired
 	private ExhibitionAssessRepository exhibitionAssessRepository;
+
+	@Autowired
+	ExhibitionAssessmentResponse exhibitionAssessmentResponse;
+
+	@Autowired
+	ExhibitionScoreRepository exhibitionScoreRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
 	public List<ExhibitionItem> getEnumeration() {
@@ -86,5 +100,33 @@ public class ExhibitionsApiController {
 		}
 
 		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.POST)
+	public ExhibitionAssessmentResponse postAssessment(
+			ServletRequest request,
+			@PathVariable("id") Integer exhibitionId,
+			@RequestParam("score") Integer score,
+			@RequestParam("comment") String comment
+		) throws NotFoundException, InvalidParameterValueException, InternalServerErrorException
+	{
+		if (!this.simpleExhibitionRepository.exists(exhibitionId)) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		ExhibitionAssess newAssessment = new ExhibitionAssess(exhibitionId, new SecureAccount(account), new Date(), score, comment);
+		ExhibitionAssess oldAssessment = this.exhibitionAssessRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
+
+		if (oldAssessment == null) {
+			this.exhibitionAssessRepository.save(newAssessment);
+			this.exhibitionScoreRepository.assess(exhibitionId, score);
+		} else {
+			this.exhibitionAssessRepository.updateAssess(newAssessment.getAccountId(), newAssessment.getExhibitionId(), newAssessment.getDatetime(), newAssessment.getScore(), newAssessment.getComment());
+			this.exhibitionScoreRepository.reassess(exhibitionId, score, oldAssessment.getScore());
+		}
+
+		AssessedScore aggregate = this.exhibitionScoreRepository.findByExhibitionId(exhibitionId);
+
+		return new ExhibitionAssessmentResponse(exhibitionId, newAssessment, aggregate);
 	}
 }
