@@ -10,12 +10,11 @@ import hokutosai.server.config.MediaConfiguration;
 import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
-import hokutosai.server.data.entity.news.NewsWithMedia;
 import hokutosai.server.data.entity.news.SelectableNews;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
 import hokutosai.server.data.repository.news.NewsLikeRepository;
-import hokutosai.server.data.repository.news.NewsWithMediaRepository;
 import hokutosai.server.data.repository.news.SelectableNewsRepository;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.error.NotFoundException;
@@ -47,10 +46,9 @@ public class NewsApiController {
 	private SelectableNewsRepository selectableNewsRepository;
 
 	@Autowired
-	private NewsWithMediaRepository newsWithMediaRepository;
-
-	@Autowired
 	private NewsLikeRepository newsLikeRepository;
+
+	private MediaRepository mediaRepository;
 
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws BadRequestException {
@@ -62,9 +60,8 @@ public class NewsApiController {
 
 		List<Media> medias = news.getMedias();
 		if (medias != null) {
-			int sequence = 0;
 			for (Media media: medias) {
-				this.newsWithMediaRepository.save(new NewsWithMedia(newsId, media.getMediaId(), ++sequence));
+				this.mediaRepository.link(media.getMediaId(), newsId);
 			}
 		}
 
