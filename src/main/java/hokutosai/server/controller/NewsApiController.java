@@ -28,6 +28,7 @@ import static hokutosai.server.data.specification.SelectableNewsSpecifications.*
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.http.MediaType;
@@ -119,14 +120,16 @@ public class NewsApiController {
 		Date sinceDatetime = sinceDatetimeStr == null ? null : this.datetimeConverter.stringToDate(sinceDatetimeStr);
 		Date lastDatetime = lastDatetimeStr == null ? null : this.datetimeConverter.stringToDate(lastDatetimeStr);
 
-		List<SelectableNews> results = this.selectableNewsRepository.findAll(Specifications
-					.where(laterThanNewsId(sinceId))
-					.and(earlierThanNewsId(lastId))
-					.and(filterByEventId(filterEventId))
-					.and(filterByShopId(filterShopId))
-					.and(filterByExhibitionId(filterExhibitionId)),
-					new Sort(Sort.Direction.DESC, "datetime")
-				);
+		Specifications<SelectableNews> spec = Specifications
+				.where(laterThanNewsId(sinceId))
+				.and(earlierThanNewsId(lastId))
+				.and(filterByEventId(filterEventId))
+				.and(filterByShopId(filterShopId))
+				.and(filterByExhibitionId(filterExhibitionId));
+
+		List<SelectableNews> results = (count == null)
+				? this.selectableNewsRepository.findAll(spec, new Sort(Sort.Direction.DESC, "datetime"))
+				: this.selectableNewsRepository.findAll(spec, new PageRequest(0, count, Sort.Direction.DESC, "datetime")).getContent();
 
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
 		if (account != null) {
