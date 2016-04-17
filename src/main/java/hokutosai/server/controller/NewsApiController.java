@@ -48,6 +48,7 @@ public class NewsApiController {
 	@Autowired
 	private NewsLikeRepository newsLikeRepository;
 
+	@Autowired
 	private MediaRepository mediaRepository;
 
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
