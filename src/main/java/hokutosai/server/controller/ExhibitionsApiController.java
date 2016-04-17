@@ -24,6 +24,7 @@ import hokutosai.server.data.entity.exhibitions.ExhibitionLike;
 import hokutosai.server.data.entity.exhibitions.SimpleExhibition;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.exhibitions.ExhibitionAssessmentResponse;
+import hokutosai.server.data.json.exhibitions.ExhibitionLikeResult;
 import hokutosai.server.data.repository.exhibitions.DetailedExhibitionRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionItemRepository;
@@ -146,5 +147,42 @@ public class ExhibitionsApiController {
 		AssessedScore aggregate = this.exhibitionScoreRepository.findByExhibitionId(exhibitionId);
 
 		return new ExhibitionAssessmentResponse(exhibitionId, null, aggregate);
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
+	public ExhibitionLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException, InternalServerErrorException {
+		SimpleExhibition exhibition = this.simpleExhibitionRepository.findByExhibitionId(exhibitionId);
+		if (exhibition == null) throw new NotFoundException("The id is not used.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		if (this.exhibitionLikeRepository.findByExhibitionIdAndAccountId(exhibitionId, accountId) == null) {
+			this.exhibitionLikeRepository.save(new ExhibitionLike(exhibitionId, accountId));
+			this.detailedExhibitionRepository.incrementLikesCount(exhibitionId);
+			exhibition.setLikesCount(exhibition.getLikesCount() + 1);
+		}
+
+		ExhibitionLikeResult result = new ExhibitionLikeResult(exhibition);
+		result.setLiked(true);
+		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
+	public ExhibitionLikeResult deleteLikes(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException, InternalServerErrorException {
+		SimpleExhibition exhibition = this.simpleExhibitionRepository.findByExhibitionId(exhibitionId);
+		if (exhibition == null) throw new NotFoundException("The id is not used.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		ExhibitionLike like = this.exhibitionLikeRepository.findByExhibitionIdAndAccountId(exhibitionId, accountId);
+		if (like != null) {
+			this.exhibitionLikeRepository.delete(like.getId());
+			this.detailedExhibitionRepository.decrementLikesCount(exhibitionId);
+			exhibition.setLikesCount(exhibition.getLikesCount() - 1);
+		}
+
+		ExhibitionLikeResult result = new ExhibitionLikeResult(exhibition);
+		result.setLiked(false);
+		return result;
 	}
 }
