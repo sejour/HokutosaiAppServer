@@ -13,6 +13,7 @@ import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
+import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
@@ -30,6 +31,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,6 +94,16 @@ public class NewsApiController {
 		}
 
 		return result;
+	}
+	
+	@RequestMapping(value = "/{id:^[0-9]+$}", method = RequestMethod.DELETE)
+	public StatusResponse deleteArticle(@PathVariable("id") Integer newsId) throws BadRequestException {
+		if (!this.insertableNewsRepository.exists(newsId)) throw new BadRequestException("The news is not exit.");
+		
+		this.mediaRepository.deleteByNewsId(newsId);
+		this.insertableNewsRepository.delete(newsId);
+		
+		return new StatusResponse(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
