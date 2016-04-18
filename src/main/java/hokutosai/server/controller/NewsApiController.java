@@ -15,11 +15,13 @@ import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.json.news.NewsLikeResult;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
 import hokutosai.server.data.repository.news.NewsLikeRepository;
 import hokutosai.server.data.repository.news.SelectableNewsRepository;
 import hokutosai.server.error.BadRequestException;
+import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.security.ParamValidator;
 import hokutosai.server.util.DatetimeConverter;
@@ -95,14 +97,14 @@ public class NewsApiController {
 
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/{id:^[0-9]+$}", method = RequestMethod.DELETE)
 	public StatusResponse deleteArticle(@PathVariable("id") Integer newsId) throws BadRequestException {
 		if (!this.insertableNewsRepository.exists(newsId)) throw new BadRequestException("The news is not exit.");
-		
+
 		this.mediaRepository.deleteByNewsId(newsId);
 		this.insertableNewsRepository.delete(newsId);
-		
+
 		return new StatusResponse(HttpStatus.OK);
 	}
 
@@ -174,6 +176,24 @@ public class NewsApiController {
 	    for (SelectableNews result: results) {
 	    	result.setLiked(likesMap.containsKey(result.getNewsId()));
 	    }
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
+	public NewsLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer newsId) throws NotFoundException, InternalServerErrorException {
+		SelectableNews news = this.selectableNewsRepository.findOne(newsId);
+		if (news == null) throw new NotFoundException("The news is not exist.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		if (this.newsLikeRepository.findByNewsIdAndAccountId(newsId, accountId) == null) {
+			this.newsLikeRepository.save(new NewsLike(newsId, accountId));
+			this.selectableNewsRepository.incrementLikesCount(newsId);
+			news.setLikesCount(news.getLikesCount() + 1);
+		}
+
+		NewsLikeResult result = new NewsLikeResult(news);
+		result.setLiked(true);
+		return result;
 	}
 
 }
