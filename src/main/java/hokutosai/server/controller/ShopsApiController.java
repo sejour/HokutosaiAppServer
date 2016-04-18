@@ -11,13 +11,16 @@ import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
+import hokutosai.server.data.entity.shops.ShopItem;
 import hokutosai.server.data.entity.shops.ShopLike;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
+import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
+import hokutosai.server.data.repository.shops.ShopItemRepository;
 import hokutosai.server.data.repository.shops.ShopLikeRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
 import hokutosai.server.data.repository.shops.SimpleShopRepository;
@@ -44,6 +47,9 @@ public class ShopsApiController {
 
 	@Autowired
     private DetailedShopRepository detailedShopRepository;
+
+	@Autowired
+	private ShopItemRepository shopItemRepository;
 
 	@Autowired
 	private ShopScoreRepository shopScoreRepository;
@@ -74,18 +80,9 @@ public class ShopsApiController {
 	    return results;
 	}
 
-	@RequestMapping(value = "{id:^[0-9]+$}", method = RequestMethod.GET)
-	public SimpleShop get(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
-		SimpleShop result = this.simpleShopRepository.findByShopId(shopId);
-		if (result == null) throw new NotFoundException("The id is not used.");
-
-		AuthorizedAccount account = RequestAttribute.getAccount(request);
-		if (account != null) {
-			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
-			result.setLiked(like != null);
-		}
-
-		return result;
+	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
+	public List<ShopItem> getEnumeration() {
+		return this.shopItemRepository.findAll();
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
@@ -139,8 +136,26 @@ public class ShopsApiController {
 		return new ShopAssessmentResponse(shopId, newAssessment, aggregate);
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.DELETE)
+	public ShopAssessmentResponse deleteAssessment(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		ShopAssess assessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+
+		if (assessment != null) {
+			this.shopScoreRepository.cancelAssess(shopId, assessment.getScore());
+			this.shopAssessRepository.delete(assessment.getId());
+		}
+
+		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
+
+		return new ShopAssessmentResponse(shopId, null, aggregate);
+	}
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
-	public SimpleShop postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+	public ShopLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
 
@@ -152,12 +167,13 @@ public class ShopsApiController {
 			shop.setLikesCount(shop.getLikesCount() + 1);
 		}
 
-		shop.setLiked(true);
-		return shop;
+		ShopLikeResult result = new ShopLikeResult(shop);
+		result.setLiked(true);
+		return result;
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
-	public SimpleShop deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
+	public ShopLikeResult deleteLikes(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException, InternalServerErrorException {
 		SimpleShop shop = this.simpleShopRepository.findByShopId(shopId);
 		if (shop == null) throw new NotFoundException("The id is not used.");
 
@@ -170,8 +186,9 @@ public class ShopsApiController {
 			shop.setLikesCount(shop.getLikesCount() - 1);
 		}
 
-		shop.setLiked(false);
-		return shop;
+		ShopLikeResult result = new ShopLikeResult(shop);
+		result.setLiked(false);
+		return result;
 	}
 
 }

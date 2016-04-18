@@ -46,7 +46,7 @@ public abstract class Shop {
 
 	@Transient
 	@JsonProperty("liked")
-	private boolean liked;
+	private Boolean liked;
 
 	@Column(name = "likes_count")
 	@JsonProperty("likes_count")
