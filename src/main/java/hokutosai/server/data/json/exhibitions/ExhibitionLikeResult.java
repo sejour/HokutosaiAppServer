@@ -12,7 +12,7 @@ public class ExhibitionLikeResult {
 	private Integer exhibitionId;
 
 	@JsonProperty("liked")
-	private boolean liked;
+	private Boolean liked;
 
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
