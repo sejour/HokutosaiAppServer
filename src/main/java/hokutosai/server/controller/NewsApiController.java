@@ -46,9 +46,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class NewsApiController {
 
 	@Autowired
-	private MediaConfiguration mediaConfig;
-
-	@Autowired
 	private InsertableNewsRepository insertableNewsRepository;
 
 	@Autowired
