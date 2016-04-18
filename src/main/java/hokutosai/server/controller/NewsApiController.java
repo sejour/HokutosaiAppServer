@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
-import hokutosai.server.config.MediaConfiguration;
 import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
