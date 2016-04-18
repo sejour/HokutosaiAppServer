@@ -13,9 +13,12 @@ import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
+import hokutosai.server.data.entity.shops.ShopLike;
+import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.news.NewsLikeResult;
+import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
 import hokutosai.server.data.repository.news.NewsLikeRepository;
@@ -193,6 +196,25 @@ public class NewsApiController {
 
 		NewsLikeResult result = new NewsLikeResult(news);
 		result.setLiked(true);
+		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
+	public NewsLikeResult deleteLikes(ServletRequest request, @PathVariable("id") Integer newsId) throws NotFoundException, InternalServerErrorException {
+		SelectableNews news = this.selectableNewsRepository.findOne(newsId);
+		if (news == null) throw new NotFoundException("The news is not exist.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		NewsLike like = this.newsLikeRepository.findByNewsIdAndAccountId(newsId, accountId);
+		if (like != null) {
+			this.newsLikeRepository.delete(like.getId());
+			this.selectableNewsRepository.decrementLikesCount(newsId);
+			news.setLikesCount(news.getLikesCount() - 1);
+		}
+
+		NewsLikeResult result = new NewsLikeResult(news);
+		result.setLiked(false);
 		return result;
 	}
 
