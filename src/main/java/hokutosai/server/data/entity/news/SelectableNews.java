@@ -53,7 +53,7 @@ public class SelectableNews extends News {
 	@Transient
 	@JsonProperty("liked")
 	@Getter @Setter
-	private boolean liked;
+	private Boolean liked;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "news_id", insertable = false, updatable = false)
