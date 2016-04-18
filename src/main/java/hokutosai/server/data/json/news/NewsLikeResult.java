@@ -18,10 +18,10 @@ public class NewsLikeResult {
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
 
-	public NewsLikeResult(SelectableNews shop) {
-		this.newsId = shop.getNewsId();
-		this.liked = shop.getLiked();
-		this.likesCount = shop.getLikesCount();
+	public NewsLikeResult(SelectableNews news) {
+		this.newsId = news.getNewsId();
+		this.liked = news.getLiked();
+		this.likesCount = news.getLikesCount();
 	}
 
 }
