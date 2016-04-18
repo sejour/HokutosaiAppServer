@@ -57,10 +57,7 @@ public class ExhibitionsApiController {
 	private ExhibitionAssessRepository exhibitionAssessRepository;
 
 	@Autowired
-	ExhibitionAssessmentResponse exhibitionAssessmentResponse;
-
-	@Autowired
-	ExhibitionScoreRepository exhibitionScoreRepository;
+	private ExhibitionScoreRepository exhibitionScoreRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
 	public List<ExhibitionItem> getEnumeration() {
