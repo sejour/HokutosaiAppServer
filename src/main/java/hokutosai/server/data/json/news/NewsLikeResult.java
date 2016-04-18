@@ -13,7 +13,7 @@ public class NewsLikeResult {
 	private Integer newsId;
 
 	@JsonProperty("liked")
-	private boolean liked;
+	private Boolean liked;
 
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
