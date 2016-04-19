@@ -40,7 +40,7 @@ public class TopicNews implements Topic {
 
 	@Override
 	public String getMediaUrl() {
-		if (this.medias != null || !this.medias.isEmpty()) {
+		if (this.medias != null && !this.medias.isEmpty()) {
 			return this.medias.get(0).getUrl();
 		}
 		return null;
