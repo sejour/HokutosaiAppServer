@@ -13,13 +13,10 @@ import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
-import hokutosai.server.data.entity.shops.ShopLike;
-import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.news.NewsLikeResult;
 import hokutosai.server.data.json.news.Topic;
-import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.events.TopicEventRepository;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
@@ -66,16 +63,16 @@ public class NewsApiController {
 
 	@Autowired
 	private MediaRepository mediaRepository;
-	
+
 	@Autowired
 	private TopicNewsRepository topicNewsRepository;
-	
+
 	@Autowired
 	private TopicEventRepository topicEventRepository;
 
 	@Autowired
 	private TopicLinkRepository topicLinkRepository;
-	
+
 	@Autowired
 	private DatetimeConverter datetimeConverter;
 
@@ -198,7 +195,7 @@ public class NewsApiController {
 	public List<Topic> getTopics() {
 		return null;
 	}
-	
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
 	public NewsLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer newsId) throws NotFoundException, InternalServerErrorException {
 		SelectableNews news = this.selectableNewsRepository.findOne(newsId);
