@@ -18,6 +18,7 @@ import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.news.NewsLikeResult;
+import hokutosai.server.data.json.news.Topic;
 import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
@@ -181,6 +182,11 @@ public class NewsApiController {
 	    }
 	}
 
+	@RequestMapping(value = "/topics", method = RequestMethod.GET)
+	public List<Topic> getTopics() {
+		return null;
+	}
+	
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
 	public NewsLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer newsId) throws NotFoundException, InternalServerErrorException {
 		SelectableNews news = this.selectableNewsRepository.findOne(newsId);
