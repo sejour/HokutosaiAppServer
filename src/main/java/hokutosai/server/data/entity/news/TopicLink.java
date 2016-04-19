@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
 
@@ -18,6 +20,7 @@ public class TopicLink implements Topic {
 	
 	@Id
 	@Column(name = "id") @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
 	private Integer id;
 
 	@Column(name = "title")
