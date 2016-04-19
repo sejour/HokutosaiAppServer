@@ -210,7 +210,7 @@ public class NewsApiController {
 				.where((root, query, cb) -> {
 					return cb.isTrue(root.get("isTopic"));
 				}),
-				new PageRequest(0, TOPIC_NEWS_COUNT_MAX, Sort.Direction.DESC, "datetime")
+				new PageRequest(0, TOPIC_NEWS_COUNT_MAX, Sort.Direction.DESC, "newsId")
 		).getContent();
 
 		List<Topic> results = new ArrayList<Topic>();
