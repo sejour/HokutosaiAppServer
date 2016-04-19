@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
 
@@ -27,5 +29,9 @@ public class TopicEvent implements Topic {
 
 	@Override
 	public Integer getNewsId() { return null; }
+
+	@Column(name = "featured")
+	@JsonIgnore
+	private Boolean featured;
 
 }
