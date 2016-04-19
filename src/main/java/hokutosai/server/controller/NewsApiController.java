@@ -1,6 +1,7 @@
 package hokutosai.server.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +10,13 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
+import hokutosai.server.data.entity.events.TopicEvent;
 import hokutosai.server.data.entity.media.Media;
+import hokutosai.server.data.entity.news.ConstantlyTopic;
 import hokutosai.server.data.entity.news.InsertableNews;
 import hokutosai.server.data.entity.news.NewsLike;
 import hokutosai.server.data.entity.news.SelectableNews;
+import hokutosai.server.data.entity.news.TopicNews;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.news.NewsLikeResult;
@@ -75,6 +79,8 @@ public class NewsApiController {
 
 	@Autowired
 	private DatetimeConverter datetimeConverter;
+
+	private int TOPIC_NEWS_COUNT_MAX = 3;
 
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws Throwable {
@@ -193,7 +199,27 @@ public class NewsApiController {
 
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
 	public List<Topic> getTopics() {
-		return null;
+		// 常駐トピック
+		List<ConstantlyTopic> constantly = this.constantlyTopicRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+		// 現在開催中イベント
+		List<TopicEvent> activeEvent = this.topicEventRepository.findDatetimeActiveAll(new Date());
+		// 注目イベント
+		List<TopicEvent> featuredEvent = this.topicEventRepository.findFeaturedAll();
+		// トピックニュース
+		List<TopicNews> topicNews = this.topicNewsRepository.findAll(Specifications
+				.where((root, query, cb) -> {
+					return cb.isTrue(root.get("isTopic"));
+				}),
+				new PageRequest(0, TOPIC_NEWS_COUNT_MAX, Sort.Direction.DESC, "datetime")
+		).getContent();
+
+		List<Topic> results = new ArrayList<Topic>();
+		results.addAll(constantly);
+		results.addAll(activeEvent);
+		results.addAll(featuredEvent);
+		results.addAll(topicNews);
+
+		return results;
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
