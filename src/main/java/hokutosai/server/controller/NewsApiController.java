@@ -20,10 +20,13 @@ import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.news.NewsLikeResult;
 import hokutosai.server.data.json.news.Topic;
 import hokutosai.server.data.json.shops.ShopLikeResult;
+import hokutosai.server.data.repository.events.TopicEventRepository;
 import hokutosai.server.data.repository.media.MediaRepository;
 import hokutosai.server.data.repository.news.InsertableNewsRepository;
 import hokutosai.server.data.repository.news.NewsLikeRepository;
 import hokutosai.server.data.repository.news.SelectableNewsRepository;
+import hokutosai.server.data.repository.news.TopicLinkRepository;
+import hokutosai.server.data.repository.news.TopicNewsRepository;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
@@ -63,7 +66,16 @@ public class NewsApiController {
 
 	@Autowired
 	private MediaRepository mediaRepository;
+	
+	@Autowired
+	private TopicNewsRepository topicNewsRepository;
+	
+	@Autowired
+	private TopicEventRepository topicEventRepository;
 
+	@Autowired
+	private TopicLinkRepository topicLinkRepository;
+	
 	@Autowired
 	private DatetimeConverter datetimeConverter;
 
