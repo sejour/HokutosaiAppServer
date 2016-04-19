@@ -7,8 +7,8 @@ public interface Topic {
 	@JsonProperty("title")
 	public String getTitle();
 	
-	@JsonProperty("image_url")
-	public String getImageUrl();
+	@JsonProperty("media_url")
+	public String getMediaUrl();
 	
 	@JsonProperty("link")
 	public String getLink();
