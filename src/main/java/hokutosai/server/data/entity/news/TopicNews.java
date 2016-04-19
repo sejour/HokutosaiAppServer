@@ -31,7 +31,7 @@ public class TopicNews implements Topic {
 
 	@Column(name = "title", nullable = false)
 	private String title;
-	
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "news_id", insertable = false, updatable = false)
 	@OrderBy("sequence ASC")
@@ -48,10 +48,6 @@ public class TopicNews implements Topic {
 
 	@Override
 	@Transient
-	public String getLink() { return null; }
-
-	@Override
-	@Transient
 	public Integer getEventId() { return null; }
-	
+
 }

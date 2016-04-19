@@ -21,14 +21,11 @@ public class TopicEvent implements Topic {
 
 	@Column(name = "title")
 	private String title;
-	
+
 	@Column(name = "image_url")
 	private String mediaUrl;
 
 	@Override
-	public String getLink() { return null; }
-
-	@Override
 	public Integer getNewsId() { return null; }
-	
+
 }
