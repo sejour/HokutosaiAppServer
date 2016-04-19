@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
@@ -29,9 +30,11 @@ public class TopicLink implements Topic {
 	private String link;
 
 	@Override
+	@Transient
 	public Integer getEventId() { return null; }
 
 	@Override
+	@Transient
 	public Integer getNewsId() { return null; }
 	
 }
