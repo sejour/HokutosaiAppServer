@@ -50,4 +50,8 @@ public class TopicNews implements Topic {
 	@Transient
 	public Integer getEventId() { return null; }
 
+	@Column(name = "topic")
+	@JsonIgnore
+	private Boolean isTopic;
+
 }
