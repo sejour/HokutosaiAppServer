@@ -1,13 +1,12 @@
 package hokutosai.server.security.auth;
 
 import hokutosai.server.data.entity.auth.Permission;
+import hokutosai.server.data.type.PermissionEnum;
 
 public abstract class Authorizer {
 
-	public static final String PERMISSION_ALLOW = "allow";
-
 	public static boolean isAllow(Permission permission) {
-		return permission.getPermission().equals(PERMISSION_ALLOW);
+		return permission.getPermission() == PermissionEnum.allow;
 	}
 
 }
