@@ -1,6 +1,7 @@
 package hokutosai.server.data.entity.events;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,10 +45,10 @@ public class TopicEvent implements Topic {
 
 	@Column(name = "start_time") @Temporal(TemporalType.TIME)
     @JsonIgnore
-    private Date startTime;
+    private Time startTime;
 
 	@Column(name = "end_time") @Temporal(TemporalType.TIME)
     @JsonIgnore
-    private Date endTime;
+    private Time endTime;
 
 }
