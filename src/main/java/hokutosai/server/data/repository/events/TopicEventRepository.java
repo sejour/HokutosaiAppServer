@@ -1,6 +1,7 @@
 package hokutosai.server.data.repository.events;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +15,7 @@ public interface TopicEventRepository extends JpaRepository<TopicEvent, Integer>
 	@Query("SELECT t FROM TopicEvent t WHERE t.featured = true")
 	public List<TopicEvent> findFeaturedAll();
 
-	@Query("SELECT t FROM TopicEvent t WHERE t.date = :datetime AND t.startTime <= :datetime AND t.endTime > :datetime")
-	public List<TopicEvent> findDatetimeActiveAll(@Param("datetime") Date datetime);
+	@Query("SELECT t FROM TopicEvent t WHERE t.date = :date AND t.startTime <= :time AND t.endTime > :time")
+	public List<TopicEvent> findDateTimeActiveAll(@Param("date") Date date, @Param("time") Time time);
 
 }
