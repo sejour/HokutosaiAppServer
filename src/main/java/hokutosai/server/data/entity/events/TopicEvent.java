@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,15 +37,15 @@ public class TopicEvent implements Topic {
 	@JsonIgnore
 	private Boolean featured;
 
-	@Column(name = "date") @Temporal(TemporalType.DATE)
+	@Column(name = "date")
 	@JsonIgnore
     private Date date;
 
-	@Column(name = "start_time") @Temporal(TemporalType.TIME)
+	@Column(name = "start_time")
     @JsonIgnore
     private Time startTime;
 
-	@Column(name = "end_time") @Temporal(TemporalType.TIME)
+	@Column(name = "end_time")
     @JsonIgnore
     private Time endTime;
 
