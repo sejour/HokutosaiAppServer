@@ -36,18 +36,6 @@ public class News {
 	@JsonProperty("datetime")
 	private Date datetime;
 
-	@Column(name = "event_id")
-	@JsonProperty("event_id")
-	private Integer eventId;
-
-	@Column(name = "shop_id")
-	@JsonProperty("shop_id")
-	private Integer shopId;
-
-	@Column(name = "exhibition_id")
-	@JsonProperty("exhibition_id")
-	private Integer exhibitionId;
-
 	@Column(name = "topic", nullable = false)
 	@JsonProperty("topic")
 	@NotNull
@@ -61,9 +49,5 @@ public class News {
 	@JsonProperty("text")
 	@NotBlank
 	private String text;
-
-	@Column(name = "likes_count", insertable = false)
-	@JsonProperty("likes_count")
-	private Integer likesCount;
 
 }

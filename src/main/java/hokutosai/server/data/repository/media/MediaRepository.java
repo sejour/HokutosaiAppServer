@@ -9,11 +9,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MediaRepository extends JpaRepository<Media, Integer> {
+public interface MediaRepository extends JpaRepository<Media, String> {
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE Media m SET m.url = :url WHERE m.mediaId = :mediaId")
-	public void registUrl(@Param("mediaId") Integer mediaId, @Param("url") String url);
+	@Query("UPDATE Media m SET m.newsId = :newsId WHERE m.mediaId = :mediaId")
+	public void link(@Param("mediaId") String mediaId, @Param("newsId") Integer newsId);
 
+	@Modifying
+    @Transactional
+    @Query("DELETE FROM Media m WHERE m.newsId = :newsId")
+	public void deleteByNewsId(@Param("newsId") Integer newsId);
+	
 }
