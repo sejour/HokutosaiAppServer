@@ -1,6 +1,5 @@
 package hokutosai.server.controller;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -204,9 +203,11 @@ public class NewsApiController {
 		List<ConstantlyTopic> constantly = this.constantlyTopicRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
 		// 現在開催中イベント
 		Long now = new Date().getTime();
-		List<TopicEvent> activeEvent = this.topicEventRepository.findDateTimeActiveAll(new java.sql.Date(now), new java.sql.Time(now));
+		java.sql.Date currentDate = new java.sql.Date(now);
+		java.sql.Time currentTime = new java.sql.Time(now);
+		List<TopicEvent> activeEvent = this.topicEventRepository.findDateTimeActiveAll(currentDate, currentTime);
 		// 注目イベント
-		List<TopicEvent> featuredEvent = this.topicEventRepository.findFeaturedAll();
+		List<TopicEvent> featuredEvent = this.topicEventRepository.findFeaturedAll(currentDate, currentTime);
 		// トピックニュース
 		List<TopicNews> topicNews = this.topicNewsRepository.findAll(Specifications
 				.where((root, query, cb) -> {
