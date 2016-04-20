@@ -12,7 +12,7 @@ import hokutosai.server.data.entity.events.TopicEvent;
 
 public interface TopicEventRepository extends JpaRepository<TopicEvent, Integer> {
 
-	@Query("SELECT t FROM TopicEvent t WHERE t.featured = true AND t.date >= :date AND t.startTime > :currentTime")
+	@Query("SELECT t FROM TopicEvent t WHERE t.featured = true AND t.date >= :date AND t.startTime > :time")
 	public List<TopicEvent> findFeaturedAll(@Param("date") Date currentDate, @Param("time") Time currentTime);
 
 	@Query("SELECT t FROM TopicEvent t WHERE t.date = :date AND t.startTime <= :time AND t.endTime > :time")
