@@ -1,3 +1,4 @@
+#eclipse
 .project
 .classpath
 .settings
@@ -5,3 +6,6 @@
 bin
 build
 src/main/resources/config/application-release.properties
+
+#Mac
+.DS_Store
