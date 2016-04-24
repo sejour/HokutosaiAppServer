@@ -72,4 +72,16 @@ public class EventsApiController {
 		return results;
 	}
 
+	@RequestMapping(value = "/now", method = RequestMethod.GET)
+	public List<SimpleEvent> getEnumeration() {
+
+		Date now =  new Date();
+		Specifications<SimpleEvent> spec = Specifications
+				.where(equalSimpleEventDate(now))
+				.and(laterThanEndtime(now))
+				.and(earlierThanStarttime(now));
+
+		return this.simpleEventRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
+	}
+
 }
