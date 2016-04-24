@@ -62,6 +62,13 @@ public class HokutosaiApiFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse)response;
 
+		// CORS対応
+		if (httpRequest.getMethod().equalsIgnoreCase("OPTIONS")) {
+			this.appendCorsAccessControlHeaders(httpResponse);
+			httpResponse.setStatus(200);
+			return;
+		}
+
 		try {
 			Endpoint endpoint = this.acceptRequest(httpRequest);
 			AuthorizationHeader authHeader = new AuthorizationHeader(httpRequest);
