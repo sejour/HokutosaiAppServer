@@ -68,6 +68,9 @@ public class HokutosaiApiFilter implements Filter {
 			AuthorizationTarget apiUser = this.apiUserAuthorizer.authorize(authHeader.getApiUser(), endpoint);
 			request.setAttribute(RequestAttribute.API_USER, apiUser);
 
+			// Management side CORS対応
+			if (apiUser.getRole().equals("management")) this.appendCorsAccessControlHeaders(httpResponse);
+
 			String accountNeed = endpoint.getAccountNeed();
 			if (!accountNeed.equals("no")) {
 				if (authHeader.hasAccount()) {
@@ -107,6 +110,13 @@ public class HokutosaiApiFilter implements Filter {
 		} catch (IOException e) {
 			logger.error(e.toString());
 		}
+	}
+
+	private void appendCorsAccessControlHeaders(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
 	}
 
 	@Override
