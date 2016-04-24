@@ -13,15 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hokutosai.server.data.entity.events.DetailedEvent;
 import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.SimpleEvent;
+import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
+import hokutosai.server.error.NotFoundException;
 import hokutosai.server.util.DatetimeConverter;
 
 @RestController
@@ -34,6 +38,9 @@ public class EventsApiController {
 
 	@Autowired
 	private DatetimeConverter datetimeConverter;
+
+	@Autowired
+	private DetailedEventRepository detailedeventRepository;
 
 	@Autowired
 	private SimpleEventRepository simpleEventRepository;
@@ -82,6 +89,13 @@ public class EventsApiController {
 				.and(earlierThanStarttime(now));
 
 		return this.simpleEventRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
+	public DetailedEvent getDetailed(@PathVariable Integer id) throws NotFoundException {
+		DetailedEvent result = this.detailedeventRepository.findByEventId(id);
+		if (result == null) throw new NotFoundException("The id is not used.");
+		return result;
 	}
 
 }
