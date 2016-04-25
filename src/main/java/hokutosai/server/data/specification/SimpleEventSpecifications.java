@@ -1,6 +1,7 @@
 package hokutosai.server.data.specification;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -14,15 +15,21 @@ public class SimpleEventSpecifications {
         };
     }
 
-	public static Specification<SimpleEvent> laterThanEndtime(Date nowDatetime) {
-		return nowDatetime == null ? null : (root, query, cb) -> {
-            return cb.greaterThan(root.<Date>get("endTime"), nowDatetime);
+	public static Specification<SimpleEvent> equalSimpleEventDate(java.util.Date date) {
+		return date == null ? null : (root, query, cb) -> {
+            return cb.equal(root.<Date>get("date"), date);
         };
     }
 
-	public static Specification<SimpleEvent> earlierThanStarttime(Date nowDatetime) {
+	public static Specification<SimpleEvent> laterThanEndtime(Time nowDatetime) {
 		return nowDatetime == null ? null : (root, query, cb) -> {
-            return cb.lessThanOrEqualTo(root.<Date>get("startTime"), nowDatetime);
+            return cb.greaterThan(root.<Time>get("endTime"), nowDatetime);
+        };
+    }
+
+	public static Specification<SimpleEvent> earlierThanStarttime(Time nowDatetime) {
+		return nowDatetime == null ? null : (root, query, cb) -> {
+            return cb.lessThanOrEqualTo(root.<Time>get("startTime"), nowDatetime);
         };
     }
 

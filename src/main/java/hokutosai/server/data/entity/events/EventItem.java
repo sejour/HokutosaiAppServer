@@ -14,8 +14,11 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "events")
+@Data
 public class EventItem {
 
 	@Id

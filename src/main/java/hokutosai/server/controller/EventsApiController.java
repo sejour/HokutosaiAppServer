@@ -21,12 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hokutosai.server.data.entity.events.DetailedEvent;
 import hokutosai.server.data.entity.events.EventItem;
+import hokutosai.server.data.entity.events.EventLike;
 import hokutosai.server.data.entity.events.SimpleEvent;
+import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
+import hokutosai.server.data.repository.events.EventLikeRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
+import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.util.DatetimeConverter;
+import hokutosai.server.util.RequestAttribute;
 
 @RestController
 @EnableAutoConfiguration
@@ -44,6 +49,9 @@ public class EventsApiController {
 
 	@Autowired
 	private SimpleEventRepository simpleEventRepository;
+
+	@Autowired
+	private EventLikeRepository eventLikeRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
 	public List<EventItem> getEnumeration(ServletRequest request,
@@ -82,11 +90,14 @@ public class EventsApiController {
 	@RequestMapping(value = "/now", method = RequestMethod.GET)
 	public List<SimpleEvent> getEnumeration() {
 
-		Date now =  new Date();
+		Long now = new Date().getTime();
+		java.sql.Date currentDate = new java.sql.Date(now);
+		java.sql.Time currentTime = new java.sql.Time(now);
+
 		Specifications<SimpleEvent> spec = Specifications
-				.where(equalSimpleEventDate(now))
-				.and(laterThanEndtime(now))
-				.and(earlierThanStarttime(now));
+				.where(equalSimpleEventDate(currentDate))
+				.and(laterThanEndtime(currentTime))
+				.and(earlierThanStarttime(currentTime));
 
 		return this.simpleEventRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
 	}
@@ -95,6 +106,24 @@ public class EventsApiController {
 	public DetailedEvent getDetailed(@PathVariable Integer id) throws NotFoundException {
 		DetailedEvent result = this.detailedeventRepository.findByEventId(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
+		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.POST)
+	public EventLikeResult postLikes(ServletRequest request, @PathVariable("id") Integer eventId) throws NotFoundException, InternalServerErrorException {
+		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+		if (event == null) throw new NotFoundException("The event is not exist.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		if (this.eventLikeRepository.findByEventIdAndAccountId(eventId, accountId) == null) {
+			this.eventLikeRepository.save(new EventLike(eventId, accountId));
+			this.simpleEventRepository.incrementLikesCount(eventId);
+			event.setLikesCount(event.getLikesCount() + 1);
+		}
+
+		EventLikeResult result = new EventLikeResult(event);
+		result.setLiked(true);
 		return result;
 	}
 
