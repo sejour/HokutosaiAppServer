@@ -127,4 +127,23 @@ public class EventsApiController {
 		return result;
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}/likes", method = RequestMethod.DELETE)
+	public EventLikeResult deleteLikes(ServletRequest request, @PathVariable("id") Integer eventId) throws NotFoundException, InternalServerErrorException {
+		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+		if (event == null) throw new NotFoundException("The event is not exist.");
+
+		String accountId = RequestAttribute.getRequiredAccount(request).getId();
+
+		EventLike like = this.eventLikeRepository.findByEventIdAndAccountId(eventId, accountId);
+		if (like != null) {
+			this.eventLikeRepository.delete(like.getId());
+			this.simpleEventRepository.decrementLikesCount(eventId);
+			event.setLikesCount(event.getLikesCount() - 1);
+		}
+
+		EventLikeResult result = new EventLikeResult(event);
+		result.setLiked(false);
+		return result;
+	}
+
 }
