@@ -20,7 +20,7 @@ public class AssessmentReportCause {
 	@Id
 	@Column(name = "cause_id") @GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonProperty("cause_id")
-	private Integer cuaseId;
+	private String cuaseId;
 
 	@Column(name = "text", nullable = false)
 	@JsonProperty("text")
