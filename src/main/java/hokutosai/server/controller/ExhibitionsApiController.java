@@ -191,7 +191,7 @@ public class ExhibitionsApiController {
 		return result;
 	}
 
-	@RequestMapping(value = "/assessment/{id:^[0-9]+$}/report", method = RequestMethod.GET)
+	@RequestMapping(value = "/assessment/{id:^[0-9]+$}/report", method = RequestMethod.POST)
 	public StatusResponse postAssessmentReport(ServletRequest request, @PathVariable("id") Integer assessmentId, @RequestParam("cause") String cause) throws NotFoundException, InvalidParameterValueException {
 		String causeId = ParamValidator.text("cause", cause);
 
