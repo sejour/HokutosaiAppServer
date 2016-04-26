@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
-import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopItem;

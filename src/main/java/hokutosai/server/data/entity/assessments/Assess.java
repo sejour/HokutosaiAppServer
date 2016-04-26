@@ -1,4 +1,4 @@
-package hokutosai.server.data.entity;
+package hokutosai.server.data.entity.assessments;
 
 import hokutosai.server.data.entity.account.SecureAccount;
 import hokutosai.server.error.InvalidParameterValueException;

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.exhibitions.DetailedExhibition;
 import hokutosai.server.data.entity.exhibitions.ExhibitionAssess;
 import hokutosai.server.data.entity.exhibitions.ExhibitionItem;
