@@ -9,6 +9,7 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -24,5 +25,9 @@ public class AssessmentReportCause {
 	@Column(name = "text", nullable = false)
 	@JsonProperty("text")
 	private String text;
+
+	@Column(name = "sequence", nullable = false)
+	@JsonIgnore
+	private Integer sequence;
 
 }
