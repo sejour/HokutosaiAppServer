@@ -178,4 +178,17 @@ public class EventsApiController {
 		return event;
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}/feature", method = RequestMethod.PUT)
+	public SimpleEvent putfeature(ServletRequest request,
+			@PathVariable("id") Integer eventId,
+			@RequestParam(value = "featured", required = true) Boolean featured)  throws InternalServerErrorException , NotFoundException, ParseException{
+
+		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+
+		this.simpleEventRepository.updateFeatured(eventId, featured);
+		event.setFeatured(featured);
+
+		return event;
+	}
+
 }

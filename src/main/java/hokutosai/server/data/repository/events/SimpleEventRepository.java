@@ -30,4 +30,8 @@ public interface SimpleEventRepository extends JpaRepository<SimpleEvent, Intege
 	@Query("UPDATE SimpleEvent n SET n.date = :date, n.startTime = :startTime, n.endTime = :endTime  WHERE n.eventId = :eventId")
 	public void updateTimes(@Param("eventId") Integer eventId, @Param("date") Date date, @Param("startTime") Time startTime, @Param("endTime") Time endTime);
 
+	@Modifying
+	@Transactional
+	@Query("UPDATE SimpleEvent n SET n.featured = featured WHERE n.eventId = :eventId")
+	public void updateFeatured(@Param("eventId") Integer eventId, @Param("featured") Boolean featured);
 }

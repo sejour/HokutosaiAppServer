@@ -83,5 +83,5 @@ public class SimpleEvent{
 
 	@Column(name = "featured")
 	@JsonProperty("featured")
-	private  Integer featured;
+	private  Boolean featured;
 }
