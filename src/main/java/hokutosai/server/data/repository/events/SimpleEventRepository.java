@@ -1,5 +1,8 @@
 package hokutosai.server.data.repository.events;
 
+import java.sql.Date;
+import java.sql.Time;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +24,10 @@ public interface SimpleEventRepository extends JpaRepository<SimpleEvent, Intege
 	@Transactional
 	@Query("UPDATE SimpleEvent n SET n.likesCount = n.likesCount - 1 WHERE n.eventId = :eventId")
 	public void decrementLikesCount(@Param("eventId") Integer eventId);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE SimpleEvent n SET n.date = :date, n.startTime = :startTime, n.endTime = :endTime  WHERE n.eventId = :eventId")
+	public void updateTimes(@Param("eventId") Integer eventId, @Param("date") Date date, @Param("startTime") Time startTime, @Param("endTime") Time endTime);
 
 }

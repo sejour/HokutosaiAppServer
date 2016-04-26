@@ -3,6 +3,7 @@ package hokutosai.server.controller;
 import static hokutosai.server.data.specification.EventItemSpecifications.*;
 import static hokutosai.server.data.specification.SimpleEventSpecifications.*;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -144,6 +145,37 @@ public class EventsApiController {
 		EventLikeResult result = new EventLikeResult(event);
 		result.setLiked(false);
 		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/times", method = RequestMethod.PUT)
+	public SimpleEvent putTimes(ServletRequest request,
+			@PathVariable("id") Integer eventId,
+			@RequestParam(value = "date", required = false) String date,
+			@RequestParam("start_time") String startTime,
+			@RequestParam("end_time") String endTime)  throws InternalServerErrorException , NotFoundException, ParseException{
+
+		if(date == null && startTime == null && endTime == null){
+			throw new NotFoundException("all parameters are null") ;
+		}
+
+		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+
+		java.sql.Date sqlDate = event.getDate();
+		if (date != null) {
+			java.util.Date utilDate = this.datetimeConverter.stringToDate(String.format("%s 00:00:00 +0900", date));
+			sqlDate = new java.sql.Date(utilDate.getTime());
+		}
+
+		java.sql.Time starttime = startTime == null ? event.getStartTime() :  Time.valueOf(startTime);
+		java.sql.Time endtime = endTime == null ? event.getEndTime() :  Time.valueOf(endTime);
+
+		this.simpleEventRepository.updateTimes(eventId, sqlDate, starttime, endtime);
+
+		event.setDate(sqlDate);
+		event.setStartTime(starttime);
+		event.setEndTime(endtime);
+
+		return event;
 	}
 
 }
