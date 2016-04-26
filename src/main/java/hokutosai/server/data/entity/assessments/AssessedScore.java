@@ -1,4 +1,4 @@
-package hokutosai.server.data.entity;
+package hokutosai.server.data.entity.assessments;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

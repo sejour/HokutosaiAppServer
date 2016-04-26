@@ -7,19 +7,22 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
-import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
+import hokutosai.server.data.entity.shops.ShopAssessmentReport;
 import hokutosai.server.data.entity.shops.ShopItem;
 import hokutosai.server.data.entity.shops.ShopLike;
 import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
+import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
 import hokutosai.server.data.repository.shops.ShopAssessRepository;
+import hokutosai.server.data.repository.shops.ShopAssessmentReportRepository;
 import hokutosai.server.data.repository.shops.ShopItemRepository;
 import hokutosai.server.data.repository.shops.ShopLikeRepository;
 import hokutosai.server.data.repository.shops.ShopScoreRepository;
@@ -27,10 +30,12 @@ import hokutosai.server.data.repository.shops.SimpleShopRepository;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.InvalidParameterValueException;
 import hokutosai.server.error.NotFoundException;
+import hokutosai.server.security.ParamValidator;
 import hokutosai.server.util.RequestAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,6 +64,9 @@ public class ShopsApiController {
 
 	@Autowired
 	private ShopLikeRepository shopLikeRepository;
+
+	@Autowired
+	private ShopAssessmentReportRepository shopAssessmentReportRepository;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<SimpleShop> get(ServletRequest request) {
@@ -189,6 +197,19 @@ public class ShopsApiController {
 		ShopLikeResult result = new ShopLikeResult(shop);
 		result.setLiked(false);
 		return result;
+	}
+
+	@RequestMapping(value = "/assessment/{id:^[0-9]+$}/report", method = RequestMethod.GET)
+	public StatusResponse postAssessmentReport(ServletRequest request, @PathVariable("id") Integer assessmentId, @RequestParam("cause") String cause) throws NotFoundException, InvalidParameterValueException {
+		String causeId = ParamValidator.text("cause", cause);
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		String accountId = account == null ? null : account.getId();
+
+		ShopAssessmentReport report = new ShopAssessmentReport(assessmentId, causeId, accountId);
+		this.shopAssessmentReportRepository.save(report);
+
+		return new StatusResponse(HttpStatus.OK);
 	}
 
 }

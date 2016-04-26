@@ -11,8 +11,8 @@ import lombok.Setter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import hokutosai.server.data.entity.Assess;
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.Assess;
 import hokutosai.server.error.InvalidParameterValueException;
 
 @Entity
