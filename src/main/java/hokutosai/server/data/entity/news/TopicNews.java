@@ -38,17 +38,13 @@ public class TopicNews implements Topic {
 	@JsonIgnore
 	private List<Media> medias;
 
-	@Override
+	@Transient
 	public String getMediaUrl() {
 		if (this.medias != null && !this.medias.isEmpty()) {
 			return this.medias.get(0).getUrl();
 		}
 		return null;
 	}
-
-	@Override
-	@Transient
-	public Integer getEventId() { return null; }
 
 	@Column(name = "topic")
 	@JsonIgnore

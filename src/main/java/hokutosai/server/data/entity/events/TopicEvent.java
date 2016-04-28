@@ -11,27 +11,27 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
 
 @Entity
 @Table(name = "events")
 @Data
-public class TopicEvent implements Topic {
+public class TopicEvent {
 
 	@Id
 	@Column(name = "event_id") @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonProperty("event_id")
 	private Integer eventId;
 
 	@Column(name = "title")
+	@JsonProperty("title")
 	private String title;
 
 	@Column(name = "image_url")
-	private String mediaUrl;
-
-	@Override
-	public Integer getNewsId() { return null; }
+	@JsonProperty("image_url")
+	private String imageUrl;
 
 	@Column(name = "featured")
 	@JsonIgnore

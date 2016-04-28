@@ -1,8 +1,7 @@
 package hokutosai.server.data.json;
 
-import hokutosai.server.data.entity.Assess;
-import hokutosai.server.data.entity.AssessedScore;
-
+import hokutosai.server.data.entity.assessments.Assess;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 import lombok.Getter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import hokutosai.server.data.entity.AssessedScore;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 
 @Entity
 @Table(name = "exhibitions_scores")

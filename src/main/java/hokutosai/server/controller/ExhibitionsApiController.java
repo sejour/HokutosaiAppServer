@@ -9,24 +9,28 @@ import javax.servlet.ServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hokutosai.server.data.entity.AssessedScore;
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.exhibitions.DetailedExhibition;
 import hokutosai.server.data.entity.exhibitions.ExhibitionAssess;
+import hokutosai.server.data.entity.exhibitions.ExhibitionAssessmentReport;
 import hokutosai.server.data.entity.exhibitions.ExhibitionItem;
 import hokutosai.server.data.entity.exhibitions.ExhibitionLike;
 import hokutosai.server.data.entity.exhibitions.SimpleExhibition;
+import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.exhibitions.ExhibitionAssessmentResponse;
 import hokutosai.server.data.json.exhibitions.ExhibitionLikeResult;
 import hokutosai.server.data.repository.exhibitions.DetailedExhibitionRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessRepository;
+import hokutosai.server.data.repository.exhibitions.ExhibitionAssessmentReportRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionItemRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionLikeRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionScoreRepository;
@@ -34,6 +38,7 @@ import hokutosai.server.data.repository.exhibitions.SimpleExhibitionRepository;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.InvalidParameterValueException;
 import hokutosai.server.error.NotFoundException;
+import hokutosai.server.security.ParamValidator;
 import hokutosai.server.util.RequestAttribute;
 
 @RestController
@@ -58,6 +63,9 @@ public class ExhibitionsApiController {
 
 	@Autowired
 	private ExhibitionScoreRepository exhibitionScoreRepository;
+
+	@Autowired
+	private ExhibitionAssessmentReportRepository exhibitionAssessmentReportRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
 	public List<ExhibitionItem> getEnumeration() {
@@ -182,4 +190,18 @@ public class ExhibitionsApiController {
 		result.setLiked(false);
 		return result;
 	}
+
+	@RequestMapping(value = "/assessment/{id:^[0-9]+$}/report", method = RequestMethod.POST)
+	public StatusResponse postAssessmentReport(ServletRequest request, @PathVariable("id") Integer assessmentId, @RequestParam("cause") String cause) throws NotFoundException, InvalidParameterValueException {
+		String causeId = ParamValidator.text("cause", cause);
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		String accountId = account == null ? null : account.getId();
+
+		ExhibitionAssessmentReport report = new ExhibitionAssessmentReport(assessmentId, causeId, accountId);
+		this.exhibitionAssessmentReportRepository.save(report);
+
+		return new StatusResponse(HttpStatus.OK);
+	}
+
 }

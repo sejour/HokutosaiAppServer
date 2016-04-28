@@ -1,6 +1,6 @@
 package hokutosai.server.data.entity.shops;
 
-import hokutosai.server.data.entity.AssessedScore;
+import hokutosai.server.data.entity.assessments.AssessedScore;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
