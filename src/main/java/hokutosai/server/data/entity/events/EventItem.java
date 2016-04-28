@@ -37,4 +37,8 @@ public class EventItem {
 	@JsonIgnore
 	private Time startTime;
 
+	@Column(name = "place_id", nullable = false)
+	@JsonIgnore
+	private Integer placeId;
+
 }
