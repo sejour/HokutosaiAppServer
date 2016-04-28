@@ -5,6 +5,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "events")
-public class DetailedEvent extends SimpleEvent{
+public class DetailedEvent extends Event {
 
 }
