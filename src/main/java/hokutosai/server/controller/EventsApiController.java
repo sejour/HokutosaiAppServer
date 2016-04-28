@@ -64,7 +64,7 @@ public class EventsApiController {
 				.where(equalDate(datetime))
 				.and(filterByPlaceId(placeId));
 
-		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
+		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
 
 	@RequestMapping(value = "/schedule", method = RequestMethod.GET)
@@ -75,7 +75,7 @@ public class EventsApiController {
 				.where(equalSimpleEventDate(datetime))
 				.and(filterBySimpleEventPlaceId(placeId));
 
-		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
+		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
 
 	@RequestMapping(value = "/now", method = RequestMethod.GET)
@@ -89,7 +89,7 @@ public class EventsApiController {
 				.and(laterThanEndtime(currentTime))
 				.and(earlierThanStarttime(currentTime));
 
-		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
+		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
