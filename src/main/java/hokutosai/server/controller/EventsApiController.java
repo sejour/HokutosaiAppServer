@@ -1,7 +1,7 @@
 package hokutosai.server.controller;
 
 import static hokutosai.server.data.specification.EventItemSpecifications.*;
-import static hokutosai.server.data.specification.SimpleEventSpecifications.*;
+import static hokutosai.server.data.specification.EventSpecifications.*;
 
 import java.sql.Date;
 import java.sql.Time;

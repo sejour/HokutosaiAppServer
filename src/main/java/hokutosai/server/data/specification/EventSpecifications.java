@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import hokutosai.server.data.entity.events.SimpleEvent;
 
-public class SimpleEventSpecifications {
+public class EventSpecifications {
 
 	public static Specification<SimpleEvent> equalSimpleEventDate(Date date) {
 		return date == null ? null : (root, query, cb) -> {
