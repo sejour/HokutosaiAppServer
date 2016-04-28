@@ -36,7 +36,7 @@ public abstract class Event {
 	private String title;
 
 	@Column(name = "date", nullable = false)
-	@JsonIgnore
+	@JsonProperty("date")
 	private Date date;
 
 	@Column(name = "start_time", nullable = false)
