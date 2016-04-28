@@ -56,11 +56,7 @@ public class EventsApiController {
 	private EventLikeRepository eventLikeRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
-	public List<EventItem> getEnumeration(ServletRequest request,
-			@RequestParam(value = "date", required = false) String date,
-			@RequestParam(value = "place_id", required = false) Integer placeId
-	) throws ParseException {
-
+	public List<EventItem> getEnumeration(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<EventItem> spec = Specifications
@@ -73,11 +69,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/schedule", method = RequestMethod.GET)
-	public List<SimpleEvent> getSchedule(ServletRequest request,
-			@RequestParam(value = "date", required = false) String date,
-			@RequestParam(value = "place_id", required = false) Integer placeId
-	) throws ParseException {
-
+	public List<SimpleEvent> getSchedule(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<SimpleEvent> spec = Specifications
@@ -152,7 +144,7 @@ public class EventsApiController {
 			@PathVariable("id") Integer eventId,
 			@RequestParam(value = "date", required = false) String date,
 			@RequestParam("start_time") String startTime,
-			@RequestParam("end_time") String endTime)  throws InternalServerErrorException, ParseException, BadRequestException {
+			@RequestParam("end_time") String endTime) throws BadRequestException {
 		if (date == null && startTime == null && endTime == null) throw new BadRequestException("all parameters are null");
 
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
@@ -171,10 +163,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/feature", method = RequestMethod.PUT)
-	public SimpleEvent putfeature(ServletRequest request,
-			@PathVariable("id") Integer eventId,
-			@RequestParam(value = "featured", required = true) Boolean featured)  throws InternalServerErrorException , NotFoundException, ParseException{
-
+	public SimpleEvent putfeature(ServletRequest request, @PathVariable("id") Integer eventId, @RequestParam(value = "featured", required = true) Boolean featured) {
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
 
 		this.simpleEventRepository.updateFeatured(eventId, featured);
