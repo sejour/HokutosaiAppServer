@@ -9,9 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "event_likes")
-public class EventLike extends Like{
-
+@Table(name = "events_likes")
+public class EventLike extends Like {
 
 	@Column(name = "event_id")
 	@Getter @Setter

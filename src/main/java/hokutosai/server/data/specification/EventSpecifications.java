@@ -4,19 +4,19 @@ import java.sql.Date;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import hokutosai.server.data.entity.events.EventItem;
+import hokutosai.server.data.entity.events.SimpleEvent;
 
-public class EventItemSpecifications {
+public class EventSpecifications {
 
-	public static Specification<EventItem> filterByDate(Date date) {
+	public static Specification<SimpleEvent> filterByDate(Date date) {
 		return date == null ? null : (root, query, cb) -> {
             return cb.equal(root.<Date>get("date"), date);
         };
     }
 
-	public static Specification<EventItem> filterByPlaceId(Integer placeId) {
+	public static Specification<SimpleEvent> filterByPlaceId(Integer placeId) {
 		return placeId == null ? null : (root, query, cb) -> {
-            return cb.equal(root.get("placeId"), placeId);
+            return cb.equal(root.get("place").get("placeId"), placeId);
         };
     }
 }

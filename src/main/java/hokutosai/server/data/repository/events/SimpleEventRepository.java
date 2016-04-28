@@ -32,6 +32,6 @@ public interface SimpleEventRepository extends JpaRepository<SimpleEvent, Intege
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE SimpleEvent n SET n.featured = featured WHERE n.eventId = :eventId")
+	@Query("UPDATE SimpleEvent n SET n.featured = :featured WHERE n.eventId = :eventId")
 	public void updateFeatured(@Param("eventId") Integer eventId, @Param("featured") Boolean featured);
 }
