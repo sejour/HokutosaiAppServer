@@ -3,6 +3,7 @@ package hokutosai.server.controller;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -22,11 +23,13 @@ import hokutosai.server.data.entity.events.DetailedEvent;
 import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
 import hokutosai.server.data.entity.events.SimpleEvent;
+import hokutosai.server.data.entity.events.TopicEvent;
 import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.EventLikeRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
+import hokutosai.server.data.repository.events.TopicEventRepository;
 import hokutosai.server.data.specification.EventItemSpecifications;
 import hokutosai.server.data.specification.EventSpecifications;
 import hokutosai.server.error.BadRequestException;
@@ -53,6 +56,9 @@ public class EventsApiController {
 	private SimpleEventRepository simpleEventRepository;
 
 	@Autowired
+	private TopicEventRepository topicEventRepository;
+
+	@Autowired
 	private EventLikeRepository eventLikeRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
@@ -75,6 +81,21 @@ public class EventsApiController {
 				.and(EventSpecifications.filterByPlaceId(placeId));
 
 		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+	}
+
+	@RequestMapping(value = "/topics", method = RequestMethod.GET)
+	public List<TopicEvent> getTopics() {
+		Long now = new java.util.Date().getTime();
+		java.sql.Date currentDate = new java.sql.Date(now);
+		java.sql.Time currentTime = new java.sql.Time(now);
+		List<TopicEvent> activeEvents = this.topicEventRepository.findDateTimeActiveAll(currentDate, currentTime);
+		List<TopicEvent> featuredEvents = this.topicEventRepository.findFeaturedAll(currentDate, currentTime);
+
+		List<TopicEvent> results = new ArrayList<TopicEvent>();
+		if (activeEvents != null) results.addAll(activeEvents);
+		if (featuredEvents != null) results.addAll(featuredEvents);
+
+		return results;
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)

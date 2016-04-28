@@ -10,9 +10,6 @@ public interface Topic {
 	@JsonProperty("media_url")
 	public String getMediaUrl();
 
-	@JsonProperty("event_id")
-	public Integer getEventId();
-
 	@JsonProperty("news_id")
 	public Integer getNewsId();
 

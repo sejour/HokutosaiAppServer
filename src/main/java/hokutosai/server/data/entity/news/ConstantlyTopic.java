@@ -30,7 +30,4 @@ public class ConstantlyTopic implements Topic {
 	@Column(name = "news_id")
 	private Integer newsId;
 
-	@Override
-	public Integer getEventId() { return null; }
-
 }
