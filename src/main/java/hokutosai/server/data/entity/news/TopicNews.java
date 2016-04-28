@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import hokutosai.server.data.entity.media.Media;
 import lombok.Data;
@@ -27,11 +26,9 @@ public class TopicNews {
 
 	@Id
 	@Column(name = "news_id") @GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonProperty("news_id")
 	private Integer newsId;
 
 	@Column(name = "title", nullable = false)
-	@JsonProperty("title")
 	private String title;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -41,7 +38,6 @@ public class TopicNews {
 	private List<Media> medias;
 
 	@Transient
-	@JsonProperty("media_url")
 	public String getMediaUrl() {
 		if (this.medias != null && !this.medias.isEmpty()) {
 			return this.medias.get(0).getUrl();
