@@ -13,6 +13,7 @@ import javax.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,9 +64,7 @@ public class EventsApiController {
 				.where(equalDate(datetime))
 				.and(filterByPlaceId(placeId));
 
-		List<EventItem> results = this.eventItemRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
-
-		return results;
+		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
 	}
 
 	@RequestMapping(value = "/schedule", method = RequestMethod.GET)
@@ -76,9 +75,7 @@ public class EventsApiController {
 				.where(equalSimpleEventDate(datetime))
 				.and(filterBySimpleEventPlaceId(placeId));
 
-		List<SimpleEvent> results =this.simpleEventRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
-
-		return results;
+		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
 	}
 
 	@RequestMapping(value = "/now", method = RequestMethod.GET)
@@ -92,7 +89,7 @@ public class EventsApiController {
 				.and(laterThanEndtime(currentTime))
 				.and(earlierThanStarttime(currentTime));
 
-		return this.simpleEventRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
+		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "start_time")));
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
