@@ -35,7 +35,7 @@ public class EventSpecifications {
 
 	public static Specification<SimpleEvent> filterBySimpleEventPlaceId(Integer placeId) {
 		return placeId == null ? null : (root, query, cb) -> {
-            return cb.equal(root.get("placeId"), placeId);
+            return cb.equal(root.get("place").get("placeId"), placeId);
         };
     }
 }
