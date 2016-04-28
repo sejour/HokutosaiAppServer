@@ -144,10 +144,11 @@ public class EventsApiController {
 			@PathVariable("id") Integer eventId,
 			@RequestParam(value = "date", required = false) String date,
 			@RequestParam(value = "start_time", required = false) String startTime,
-			@RequestParam(value = "end_time", required = false) String endTime) throws BadRequestException {
+			@RequestParam(value = "end_time", required = false) String endTime) throws BadRequestException, NotFoundException {
 		if (date == null && startTime == null && endTime == null) throw new BadRequestException("all parameters are null");
 
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+		if (event == null) throw new NotFoundException("The event is not exist.");
 
 		Date sqlDate = date == null ? event.getDate() : Date.valueOf(date);
 		Time sqlStartTime = startTime == null ? event.getStartTime() :  Time.valueOf(startTime);
@@ -163,8 +164,9 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/feature", method = RequestMethod.PUT)
-	public SimpleEvent putFeature(ServletRequest request, @PathVariable("id") Integer eventId, @RequestParam(value = "featured") Boolean featured) {
+	public SimpleEvent putFeature(ServletRequest request, @PathVariable("id") Integer eventId, @RequestParam(value = "featured") Boolean featured) throws NotFoundException {
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
+		if (event == null) throw new NotFoundException("The event is not exist.");
 
 		this.simpleEventRepository.updateFeatured(eventId, featured);
 		event.setFeatured(featured);
