@@ -8,7 +8,7 @@ import hokutosai.server.data.entity.events.EventItem;
 
 public class EventItemSpecifications {
 
-	public static Specification<EventItem> equalDate(Date date) {
+	public static Specification<EventItem> filterByDate(Date date) {
 		return date == null ? null : (root, query, cb) -> {
             return cb.equal(root.<Date>get("date"), date);
         };
