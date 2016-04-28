@@ -15,21 +15,23 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import hokutosai.server.data.entity.media.Media;
-import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
 
 @Entity
 @Table(name = "news")
 @Data
-public class TopicNews implements Topic {
+public class TopicNews {
 
 	@Id
 	@Column(name = "news_id") @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonProperty("news_id")
 	private Integer newsId;
 
 	@Column(name = "title", nullable = false)
+	@JsonProperty("title")
 	private String title;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -38,17 +40,14 @@ public class TopicNews implements Topic {
 	@JsonIgnore
 	private List<Media> medias;
 
-	@Override
+	@Transient
+	@JsonProperty("media_url")
 	public String getMediaUrl() {
 		if (this.medias != null && !this.medias.isEmpty()) {
 			return this.medias.get(0).getUrl();
 		}
 		return null;
 	}
-
-	@Override
-	@Transient
-	public Integer getEventId() { return null; }
 
 	@Column(name = "topic")
 	@JsonIgnore
