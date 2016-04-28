@@ -3,9 +3,9 @@ package hokutosai.server.controller;
 import static hokutosai.server.data.specification.EventItemSpecifications.*;
 import static hokutosai.server.data.specification.SimpleEventSpecifications.*;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -29,6 +29,7 @@ import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.EventLikeRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
+import hokutosai.server.error.BadRequestException;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
 import hokutosai.server.util.DatetimeConverter;
@@ -60,13 +61,13 @@ public class EventsApiController {
 			@RequestParam(value = "place_id", required = false) Integer placeId
 	) throws ParseException {
 
-		Date datetime = date == null ? null : this.datetimeConverter.stringToDate(date);
+		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<EventItem> spec = Specifications
 				.where(equalDate(datetime))
 				.and(filterByPlaceId(placeId));
 
-		List<EventItem> results =this.eventItemRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
+		List<EventItem> results = this.eventItemRepository.findAll(spec, new Sort(Sort.Direction.ASC, "date"));
 
 		return results;
 	}
@@ -77,7 +78,7 @@ public class EventsApiController {
 			@RequestParam(value = "place_id", required = false) Integer placeId
 	) throws ParseException {
 
-		Date datetime = date == null ? null : this.datetimeConverter.stringToDate(date);
+		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<SimpleEvent> spec = Specifications
 				.where(equalSimpleEventDate(datetime))
@@ -90,10 +91,9 @@ public class EventsApiController {
 
 	@RequestMapping(value = "/now", method = RequestMethod.GET)
 	public List<SimpleEvent> getEnumeration() {
-
-		Long now = new Date().getTime();
-		java.sql.Date currentDate = new java.sql.Date(now);
-		java.sql.Time currentTime = new java.sql.Time(now);
+		Long now = new java.util.Date().getTime();
+		Date currentDate = new Date(now);
+		Time currentTime = new Time(now);
 
 		Specifications<SimpleEvent> spec = Specifications
 				.where(equalSimpleEventDate(currentDate))
@@ -152,28 +152,20 @@ public class EventsApiController {
 			@PathVariable("id") Integer eventId,
 			@RequestParam(value = "date", required = false) String date,
 			@RequestParam("start_time") String startTime,
-			@RequestParam("end_time") String endTime)  throws InternalServerErrorException , NotFoundException, ParseException{
-
-		if(date == null && startTime == null && endTime == null){
-			throw new NotFoundException("all parameters are null") ;
-		}
+			@RequestParam("end_time") String endTime)  throws InternalServerErrorException, ParseException, BadRequestException {
+		if (date == null && startTime == null && endTime == null) throw new BadRequestException("all parameters are null");
 
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
 
-		java.sql.Date sqlDate = event.getDate();
-		if (date != null) {
-			java.util.Date utilDate = this.datetimeConverter.stringToDate(String.format("%s 00:00:00 +0900", date));
-			sqlDate = new java.sql.Date(utilDate.getTime());
-		}
+		Date sqlDate = date == null ? event.getDate() : Date.valueOf(date);
+		Time sqlStartTime = startTime == null ? event.getStartTime() :  Time.valueOf(startTime);
+		Time sqlEndTime = endTime == null ? event.getEndTime() :  Time.valueOf(endTime);
 
-		java.sql.Time starttime = startTime == null ? event.getStartTime() :  Time.valueOf(startTime);
-		java.sql.Time endtime = endTime == null ? event.getEndTime() :  Time.valueOf(endTime);
-
-		this.simpleEventRepository.updateTimes(eventId, sqlDate, starttime, endtime);
+		this.simpleEventRepository.updateTimes(eventId, sqlDate, sqlStartTime, sqlEndTime);
 
 		event.setDate(sqlDate);
-		event.setStartTime(starttime);
-		event.setEndTime(endtime);
+		event.setStartTime(sqlStartTime);
+		event.setEndTime(sqlEndTime);
 
 		return event;
 	}

@@ -1,6 +1,6 @@
 package hokutosai.server.data.specification;
 
-import java.util.Date;
+import java.sql.Date;
 
 import org.springframework.data.jpa.domain.Specification;
 
