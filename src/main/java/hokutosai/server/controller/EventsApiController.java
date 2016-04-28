@@ -1,8 +1,5 @@
 package hokutosai.server.controller;
 
-import static hokutosai.server.data.specification.EventItemSpecifications.*;
-import static hokutosai.server.data.specification.EventSpecifications.*;
-
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
@@ -30,6 +27,8 @@ import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.EventLikeRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
+import hokutosai.server.data.specification.EventItemSpecifications;
+import hokutosai.server.data.specification.EventSpecifications;
 import hokutosai.server.error.BadRequestException;
 import hokutosai.server.error.InternalServerErrorException;
 import hokutosai.server.error.NotFoundException;
@@ -61,8 +60,8 @@ public class EventsApiController {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<EventItem> spec = Specifications
-				.where(equalDate(datetime))
-				.and(filterByPlaceId(placeId));
+				.where(EventItemSpecifications.filterByDate(datetime))
+				.and(EventItemSpecifications.filterByPlaceId(placeId));
 
 		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
@@ -72,22 +71,8 @@ public class EventsApiController {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<SimpleEvent> spec = Specifications
-				.where(equalSimpleEventDate(datetime))
-				.and(filterBySimpleEventPlaceId(placeId));
-
-		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
-	}
-
-	@RequestMapping(value = "/now", method = RequestMethod.GET)
-	public List<SimpleEvent> getEnumeration() {
-		Long now = new java.util.Date().getTime();
-		Date currentDate = new Date(now);
-		Time currentTime = new Time(now);
-
-		Specifications<SimpleEvent> spec = Specifications
-				.where(equalSimpleEventDate(currentDate))
-				.and(laterThanEndtime(currentTime))
-				.and(earlierThanStarttime(currentTime));
+				.where(EventSpecifications.filterByDate(datetime))
+				.and(EventSpecifications.filterByPlaceId(placeId));
 
 		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
