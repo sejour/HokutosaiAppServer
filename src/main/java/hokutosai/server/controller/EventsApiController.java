@@ -143,8 +143,8 @@ public class EventsApiController {
 	public SimpleEvent putTimes(ServletRequest request,
 			@PathVariable("id") Integer eventId,
 			@RequestParam(value = "date", required = false) String date,
-			@RequestParam("start_time") String startTime,
-			@RequestParam("end_time") String endTime) throws BadRequestException {
+			@RequestParam(value = "start_time", required = false) String startTime,
+			@RequestParam(value = "end_time", required = false) String endTime) throws BadRequestException {
 		if (date == null && startTime == null && endTime == null) throw new BadRequestException("all parameters are null");
 
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
@@ -163,7 +163,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/feature", method = RequestMethod.PUT)
-	public SimpleEvent putfeature(ServletRequest request, @PathVariable("id") Integer eventId, @RequestParam(value = "featured", required = true) Boolean featured) {
+	public SimpleEvent putFeature(ServletRequest request, @PathVariable("id") Integer eventId, @RequestParam(value = "featured") Boolean featured) {
 		SimpleEvent event = this.simpleEventRepository.findOne(eventId);
 
 		this.simpleEventRepository.updateFeatured(eventId, featured);
