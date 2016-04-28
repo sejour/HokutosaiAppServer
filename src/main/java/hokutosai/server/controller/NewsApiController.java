@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
 
-import hokutosai.server.data.entity.events.TopicEvent;
 import hokutosai.server.data.entity.media.Media;
 import hokutosai.server.data.entity.news.ConstantlyTopic;
 import hokutosai.server.data.entity.news.InsertableNews;
@@ -80,7 +79,7 @@ public class NewsApiController {
 	@Autowired
 	private DatetimeConverter datetimeConverter;
 
-	private int TOPIC_NEWS_COUNT_MAX = 3;
+	private int TOPIC_NEWS_COUNT_MAX = 7;
 
 	@RequestMapping(value = "/article", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
 	public InsertableNews postArticle(@RequestBody @Valid InsertableNews news, Errors errors) throws Throwable {
@@ -199,16 +198,7 @@ public class NewsApiController {
 
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
 	public List<Topic> getTopics() {
-		// 常駐トピック
 		List<ConstantlyTopic> constantly = this.constantlyTopicRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
-		// 現在開催中イベント
-		Long now = new Date().getTime();
-		java.sql.Date currentDate = new java.sql.Date(now);
-		java.sql.Time currentTime = new java.sql.Time(now);
-		List<TopicEvent> activeEvent = this.topicEventRepository.findDateTimeActiveAll(currentDate, currentTime);
-		// 注目イベント
-		List<TopicEvent> featuredEvent = this.topicEventRepository.findFeaturedAll(currentDate, currentTime);
-		// トピックニュース
 		List<TopicNews> topicNews = this.topicNewsRepository.findAll(Specifications
 				.where((root, query, cb) -> {
 					return cb.isTrue(root.get("isTopic"));
@@ -218,8 +208,6 @@ public class NewsApiController {
 
 		List<Topic> results = new ArrayList<Topic>();
 		results.addAll(constantly);
-		results.addAll(activeEvent);
-		results.addAll(featuredEvent);
 		results.addAll(topicNews);
 
 		return results;

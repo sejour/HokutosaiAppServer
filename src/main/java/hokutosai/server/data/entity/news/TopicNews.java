@@ -17,12 +17,13 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import hokutosai.server.data.entity.media.Media;
+import hokutosai.server.data.json.news.Topic;
 import lombok.Data;
 
 @Entity
 @Table(name = "news")
 @Data
-public class TopicNews {
+public class TopicNews implements Topic {
 
 	@Id
 	@Column(name = "news_id") @GeneratedValue(strategy = GenerationType.AUTO)
