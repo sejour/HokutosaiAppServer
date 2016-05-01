@@ -89,7 +89,7 @@ public class EventsApiController {
 		java.sql.Date currentDate = new java.sql.Date(now);
 		java.sql.Time currentTime = new java.sql.Time(now);
 		List<TopicEvent> activeEvents = this.topicEventRepository.findDateTimeActiveAll(currentDate, currentTime);
-		List<TopicEvent> featuredEvents = this.topicEventRepository.findFeaturedAll(currentDate, currentTime);
+		List<TopicEvent> featuredEvents = this.topicEventRepository.findFeaturedAll();
 
 		List<TopicEvent> results = new ArrayList<TopicEvent>();
 		if (activeEvents != null) results.addAll(activeEvents);

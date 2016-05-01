@@ -14,7 +14,7 @@ public interface TopicEventRepository extends JpaRepository<TopicEvent, Integer>
 
 	// @Query("SELECT t FROM TopicEvent t WHERE t.featured = true AND t.date >= :date AND t.startTime > :time")
 	@Query("SELECT t FROM TopicEvent t WHERE t.featured = true")
-	public List<TopicEvent> findFeaturedAll(@Param("date") Date currentDate, @Param("time") Time currentTime);
+	public List<TopicEvent> findFeaturedAll();
 
 	@Query("SELECT t FROM TopicEvent t WHERE t.date = :date AND t.startTime <= :time AND t.endTime > :time")
 	public List<TopicEvent> findDateTimeActiveAll(@Param("date") Date date, @Param("time") Time time);
