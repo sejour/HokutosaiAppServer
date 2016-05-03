@@ -24,6 +24,7 @@ import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
 import hokutosai.server.data.entity.events.SimpleEvent;
 import hokutosai.server.data.entity.events.TopicEvent;
+import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
@@ -99,9 +100,16 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
-	public DetailedEvent getDetails(@PathVariable Integer id) throws NotFoundException {
-		DetailedEvent result = this.detailedeventRepository.findOne(id);
+	public DetailedEvent getDetails(ServletRequest request, @PathVariable Integer eventId) throws NotFoundException {
+		DetailedEvent result = this.detailedeventRepository.findOne(eventId);
 		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			EventLike like = this.eventLikeRepository.findByEventIdAndAccountId(eventId, account.getId());
+			result.setLiked(like != null);
+		}
+
 		return result;
 	}
 
