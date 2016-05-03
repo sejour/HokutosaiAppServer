@@ -4,7 +4,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
@@ -22,12 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 import hokutosai.server.data.entity.events.DetailedEvent;
 import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
+import hokutosai.server.data.entity.events.Schedule;
 import hokutosai.server.data.entity.events.SimpleEvent;
 import hokutosai.server.data.entity.events.TopicEvent;
+import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.EventLikeRepository;
+import hokutosai.server.data.repository.events.ScheduleRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
 import hokutosai.server.data.repository.events.TopicEventRepository;
 import hokutosai.server.data.specification.EventItemSpecifications;
@@ -56,6 +61,9 @@ public class EventsApiController {
 	private SimpleEventRepository simpleEventRepository;
 
 	@Autowired
+	private ScheduleRepository scheduleRepository;
+
+	@Autowired
 	private TopicEventRepository topicEventRepository;
 
 	@Autowired
@@ -72,15 +80,57 @@ public class EventsApiController {
 		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
 
-	@RequestMapping(value = "/schedule", method = RequestMethod.GET)
-	public List<SimpleEvent> getSchedule(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
+	@RequestMapping(method = RequestMethod.GET)
+	public List<SimpleEvent> get(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<SimpleEvent> spec = Specifications
 				.where(EventSpecifications.filterByDate(datetime))
 				.and(EventSpecifications.filterByPlaceId(placeId));
 
-		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+		List<SimpleEvent> results = this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
+			for (SimpleEvent result: results) {
+				result.setLiked(likesMap.containsKey(result.getEventId()));
+			}
+		}
+
+		return results;
+	}
+
+	@RequestMapping(value = "/schedules", method = RequestMethod.GET)
+	public List<Schedule> getSchedules(ServletRequest request) {
+		List<Schedule> results = this.scheduleRepository.findAll(new Sort(Sort.Direction.ASC, "date"));
+
+		for (Schedule schedule: results) {
+			schedule.setTimetable(this.simpleEventRepository.timetableAt(schedule.getDate()));
+		}
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
+			for (Schedule schedule: results) {
+				for (SimpleEvent event: schedule.getTimetable()) {
+					event.setLiked(likesMap.containsKey(event.getEventId()));
+				}
+			}
+		}
+
+		return results;
+	}
+
+	private Map<Integer, EventLike> getEventLikesMap(String accountId) {
+		List<EventLike> likes = this.eventLikeRepository.findByAccountId(accountId);
+	    Map<Integer, EventLike> likesMap = new HashMap<Integer, EventLike>();
+
+	    for (EventLike like: likes) {
+	    	likesMap.put(like.getEventId(), like);
+	    }
+
+	    return likesMap;
 	}
 
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
@@ -99,9 +149,16 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
-	public DetailedEvent getDetailed(@PathVariable Integer id) throws NotFoundException {
-		DetailedEvent result = this.detailedeventRepository.findOne(id);
+	public DetailedEvent getDetails(ServletRequest request, @PathVariable Integer eventId) throws NotFoundException {
+		DetailedEvent result = this.detailedeventRepository.findOne(eventId);
 		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			EventLike like = this.eventLikeRepository.findByEventIdAndAccountId(eventId, account.getId());
+			result.setLiked(like != null);
+		}
+
 		return result;
 	}
 
