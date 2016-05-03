@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hokutosai.server.data.entity.events.DetailedEvent;
 import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
+import hokutosai.server.data.entity.events.Schedule;
 import hokutosai.server.data.entity.events.SimpleEvent;
 import hokutosai.server.data.entity.events.TopicEvent;
 import hokutosai.server.data.json.account.AuthorizedAccount;
@@ -31,6 +32,7 @@ import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
 import hokutosai.server.data.repository.events.EventItemRepository;
 import hokutosai.server.data.repository.events.EventLikeRepository;
+import hokutosai.server.data.repository.events.ScheduleRepository;
 import hokutosai.server.data.repository.events.SimpleEventRepository;
 import hokutosai.server.data.repository.events.TopicEventRepository;
 import hokutosai.server.data.specification.EventItemSpecifications;
@@ -57,6 +59,9 @@ public class EventsApiController {
 
 	@Autowired
 	private SimpleEventRepository simpleEventRepository;
+
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
 	@Autowired
 	private TopicEventRepository topicEventRepository;
@@ -90,6 +95,23 @@ public class EventsApiController {
 			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
 			for (SimpleEvent result: results) {
 				result.setLiked(likesMap.containsKey(result.getEventId()));
+			}
+		}
+
+		return results;
+	}
+
+	@RequestMapping(value = "/schedules", method = RequestMethod.GET)
+	public List<Schedule> getSchedules(ServletRequest request) {
+		List<Schedule> results = this.scheduleRepository.findAll(new Sort(Sort.Direction.ASC, "date"));
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
+			for (Schedule schedule: results) {
+				for (SimpleEvent event: schedule.getTimetable()) {
+					event.setLiked(likesMap.containsKey(event.getEventId()));
+				}
 			}
 		}
 
