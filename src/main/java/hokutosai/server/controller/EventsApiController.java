@@ -26,8 +26,6 @@ import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
 import hokutosai.server.data.entity.events.SimpleEvent;
 import hokutosai.server.data.entity.events.TopicEvent;
-import hokutosai.server.data.entity.news.NewsLike;
-import hokutosai.server.data.entity.news.SelectableNews;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
@@ -85,7 +83,17 @@ public class EventsApiController {
 				.where(EventSpecifications.filterByDate(datetime))
 				.and(EventSpecifications.filterByPlaceId(placeId));
 
-		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+		List<SimpleEvent> results = this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
+			for (SimpleEvent result: results) {
+				result.setLiked(likesMap.containsKey(result.getEventId()));
+			}
+		}
+
+		return results;
 	}
 
 	private Map<Integer, EventLike> getEventLikesMap(String accountId) {
