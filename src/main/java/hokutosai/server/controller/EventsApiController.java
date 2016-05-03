@@ -72,8 +72,8 @@ public class EventsApiController {
 		return this.eventItemRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
 	}
 
-	@RequestMapping(value = "/schedule", method = RequestMethod.GET)
-	public List<SimpleEvent> getSchedule(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
+	@RequestMapping(method = RequestMethod.GET)
+	public List<SimpleEvent> get(ServletRequest request, @RequestParam(value = "date", required = false) String date, @RequestParam(value = "place_id", required = false) Integer placeId) throws ParseException {
 		Date datetime = date == null ? null : Date.valueOf(date);
 
 		Specifications<SimpleEvent> spec = Specifications
