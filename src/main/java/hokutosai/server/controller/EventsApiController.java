@@ -4,7 +4,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 
@@ -24,6 +26,8 @@ import hokutosai.server.data.entity.events.EventItem;
 import hokutosai.server.data.entity.events.EventLike;
 import hokutosai.server.data.entity.events.SimpleEvent;
 import hokutosai.server.data.entity.events.TopicEvent;
+import hokutosai.server.data.entity.news.NewsLike;
+import hokutosai.server.data.entity.news.SelectableNews;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.events.EventLikeResult;
 import hokutosai.server.data.repository.events.DetailedEventRepository;
@@ -82,6 +86,17 @@ public class EventsApiController {
 				.and(EventSpecifications.filterByPlaceId(placeId));
 
 		return this.simpleEventRepository.findAll(spec, new Sort(new Order(Sort.Direction.ASC, "date"), new Order(Sort.Direction.ASC, "startTime")));
+	}
+
+	private Map<Integer, EventLike> getEventLikesMap(String accountId) {
+		List<EventLike> likes = this.eventLikeRepository.findByAccountId(accountId);
+	    Map<Integer, EventLike> likesMap = new HashMap<Integer, EventLike>();
+
+	    for (EventLike like: likes) {
+	    	likesMap.put(like.getEventId(), like);
+	    }
+
+	    return likesMap;
 	}
 
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
