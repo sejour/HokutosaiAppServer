@@ -99,7 +99,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
-	public DetailedEvent getDetailed(@PathVariable Integer id) throws NotFoundException {
+	public DetailedEvent getDetails(@PathVariable Integer id) throws NotFoundException {
 		DetailedEvent result = this.detailedeventRepository.findOne(id);
 		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
