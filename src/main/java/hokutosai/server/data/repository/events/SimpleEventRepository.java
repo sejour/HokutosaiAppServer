@@ -2,6 +2,7 @@ package hokutosai.server.data.repository.events;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +15,9 @@ import org.springframework.data.repository.query.Param;
 import hokutosai.server.data.entity.events.SimpleEvent;
 
 public interface SimpleEventRepository extends JpaRepository<SimpleEvent, Integer>,  JpaSpecificationExecutor<SimpleEvent> {
+
+	@Query("SELECT e FROM SimpleEvent e WHERE e.date = :date ORDER BY e.startTime ASC, e.endTime ASC")
+	public List<SimpleEvent> timetableAt(@Param("date") Date date);
 
 	@Modifying
 	@Transactional
