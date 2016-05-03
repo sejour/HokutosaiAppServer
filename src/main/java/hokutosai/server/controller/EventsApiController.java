@@ -105,6 +105,10 @@ public class EventsApiController {
 	public List<Schedule> getSchedules(ServletRequest request) {
 		List<Schedule> results = this.scheduleRepository.findAll(new Sort(Sort.Direction.ASC, "date"));
 
+		for (Schedule schedule: results) {
+			schedule.setTimetable(this.simpleEventRepository.timetableAt(schedule.getDate()));
+		}
+
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
 		if (account != null) {
 			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
