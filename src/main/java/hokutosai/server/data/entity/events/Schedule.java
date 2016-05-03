@@ -36,7 +36,7 @@ public class Schedule {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "date", insertable = false, updatable = false)
-	@OrderBy("startTime ASC")
+	@OrderBy("startTime ASC, endTime ASC")
 	@JsonProperty("timetable")
 	private List<SimpleEvent> timetable;
 
