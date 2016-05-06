@@ -149,7 +149,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
-	public DetailedEvent getDetails(ServletRequest request, @PathVariable Integer eventId) throws NotFoundException {
+	public DetailedEvent getDetails(ServletRequest request, @PathVariable("id") Integer eventId) throws NotFoundException {
 		DetailedEvent result = this.detailedeventRepository.findOne(eventId);
 		if (result == null) throw new NotFoundException("The id is not used.");
 
