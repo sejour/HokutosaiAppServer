@@ -1,5 +1,7 @@
 package hokutosai.server.data.entity.exhibitions;
 
+import hokutosai.server.data.entity.places.Place;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,4 +53,14 @@ public abstract class Exhibition {
 	@Column(name = "likes_count")
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
+
+	@Column(name = "introduction")
+	@JsonProperty("introduction")
+	private String introduction;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "place_id", insertable = false, updatable = false)
+	@JsonProperty("place")
+	private Place place;
+
 }

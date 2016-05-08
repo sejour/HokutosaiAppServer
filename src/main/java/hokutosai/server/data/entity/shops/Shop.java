@@ -1,5 +1,10 @@
 package hokutosai.server.data.entity.shops;
 
+import hokutosai.server.data.entity.places.Place;
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,5 +57,19 @@ public abstract class Shop {
 	@Column(name = "likes_count")
 	@JsonProperty("likes_count")
 	private  Integer likesCount;
+
+	@Column(name = "introduction")
+	@JsonProperty("introduction")
+	private String introduction;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "place_id", insertable = false, updatable = false)
+	@JsonProperty("place")
+	private Place place;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
+	@JsonProperty("menu")
+	private List<MenuItem> menu;
 
 }

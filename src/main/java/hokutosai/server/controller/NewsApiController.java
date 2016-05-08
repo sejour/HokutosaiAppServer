@@ -196,8 +196,20 @@ public class NewsApiController {
 	    }
 	}
 
+	private void setTopicNewsLiked(String accountId, List<TopicNews> results) {
+		List<NewsLike> likes = this.newsLikeRepository.findByAccountId(accountId);
+	    Map<Integer, NewsLike> likesMap = new HashMap<Integer, NewsLike>();
+
+	    for (NewsLike like: likes) {
+	    	likesMap.put(like.getNewsId(), like);
+	    }
+	    for (TopicNews result: results) {
+	    	result.setLiked(likesMap.containsKey(result.getNewsId()));
+	    }
+	}
+
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
-	public List<Topic> getTopics() {
+	public List<Topic> getTopics(ServletRequest request) {
 		List<ConstantlyTopic> constantly = this.constantlyTopicRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
 		List<TopicNews> topicNews = this.topicNewsRepository.findAll(Specifications
 				.where((root, query, cb) -> {
@@ -205,6 +217,11 @@ public class NewsApiController {
 				}),
 				new PageRequest(0, TOPIC_NEWS_COUNT_MAX, Sort.Direction.DESC, "newsId")
 		).getContent();
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			this.setTopicNewsLiked(account.getId(), topicNews);
+		}
 
 		List<Topic> results = new ArrayList<Topic>();
 		results.addAll(constantly);
