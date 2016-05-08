@@ -134,7 +134,7 @@ public class EventsApiController {
 	}
 
 	@RequestMapping(value = "/topics", method = RequestMethod.GET)
-	public List<TopicEvent> getTopics() {
+	public List<TopicEvent> getTopics(ServletRequest request) {
 		Long now = new java.util.Date().getTime();
 		java.sql.Date currentDate = new java.sql.Date(now);
 		java.sql.Time currentTime = new java.sql.Time(now);
@@ -144,6 +144,14 @@ public class EventsApiController {
 		List<TopicEvent> results = new ArrayList<TopicEvent>();
 		if (activeEvents != null) results.addAll(activeEvents);
 		if (featuredEvents != null) results.addAll(featuredEvents);
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			Map<Integer, EventLike> likesMap = this.getEventLikesMap(account.getId());
+			for (TopicEvent result: results) {
+				result.setLiked(likesMap.containsKey(result.getEventId()));
+			}
+		}
 
 		return results;
 	}
