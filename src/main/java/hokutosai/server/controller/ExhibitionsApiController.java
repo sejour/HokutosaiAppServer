@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.Assess;
 import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.exhibitions.DetailedExhibition;
 import hokutosai.server.data.entity.exhibitions.ExhibitionAssess;
@@ -28,6 +29,7 @@ import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.exhibitions.ExhibitionAssessmentResponse;
 import hokutosai.server.data.json.exhibitions.ExhibitionLikeResult;
+import hokutosai.server.data.json.exhibitions.ExhibitionsAssessmentList;
 import hokutosai.server.data.repository.exhibitions.DetailedExhibitionRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessmentReportRepository;
@@ -120,6 +122,21 @@ public class ExhibitionsApiController {
 		}
 
 		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessments", method = RequestMethod.GET)
+	public ExhibitionsAssessmentList getAssessments(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException {
+		if (!this.simpleExhibitionRepository.exists(exhibitionId)) throw new NotFoundException("The id is not used.");
+
+		List<ExhibitionAssess> assessments = this.exhibitionAssessRepository.findByExhibitionId(exhibitionId);
+
+		Assess myAssessment = null;
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			myAssessment = this.exhibitionAssessRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
+		}
+
+		return new ExhibitionsAssessmentList(exhibitionId, assessments, myAssessment);
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.POST)
