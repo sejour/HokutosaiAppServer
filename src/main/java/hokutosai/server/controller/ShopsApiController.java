@@ -92,6 +92,20 @@ public class ShopsApiController {
 		return this.shopItemRepository.findAll();
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}", method = RequestMethod.GET)
+	public SimpleShop getById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		SimpleShop result = this.simpleShopRepository.findOne(shopId);
+		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setLiked(like != null);
+		}
+
+		return result;
+	}
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
 	public DetailedShop getDetails(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
