@@ -16,7 +16,8 @@ public interface ShopAssessRepository extends JpaRepository<ShopAssess, Integer>
 
 	public ShopAssess findByShopIdAndAccountId(Integer shopId, String accountId);
 
-	public List<ShopAssess> findByShopId(Integer shopId);
+	@Query("SELECT a FROM ShopAssess a WHERE a.shopId = :shopId ORDER BY a.id DESC")
+	public List<ShopAssess> findByShopId(@Param("shopId") Integer shopId);
 
 	@Modifying
 	@Transactional

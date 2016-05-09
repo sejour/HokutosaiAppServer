@@ -16,7 +16,8 @@ public interface ExhibitionAssessRepository extends JpaRepository<ExhibitionAsse
 
 	public ExhibitionAssess findByExhibitionIdAndAccountId(Integer exhibitionId, String accountId);
 
-	public List<ExhibitionAssess> findByExhibitionId(Integer exhibitionId);
+	@Query("SELECT a FROM ExhibitionAssess a WHERE a.exhibitionId = :exhibitionId ORDER BY a.id DESC")
+	public List<ExhibitionAssess> findByExhibitionId(@Param("exhibitionId") Integer exhibitionId);
 
 	@Modifying
 	@Transactional
