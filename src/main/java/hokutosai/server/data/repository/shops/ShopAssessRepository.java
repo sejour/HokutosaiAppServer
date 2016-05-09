@@ -1,6 +1,7 @@
 package hokutosai.server.data.repository.shops;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +15,8 @@ import org.springframework.data.repository.query.Param;
 public interface ShopAssessRepository extends JpaRepository<ShopAssess, Integer> {
 
 	public ShopAssess findByShopIdAndAccountId(Integer shopId, String accountId);
+
+	public List<ShopAssess> findByShopId(Integer shopId);
 
 	@Modifying
 	@Transactional
