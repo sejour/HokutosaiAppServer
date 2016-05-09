@@ -16,7 +16,7 @@ public class ExhibitionsAssessmentList extends AssessmentList {
 	@JsonProperty("assessments")
 	private List<ExhibitionAssess> assessments;
 
-	public ExhibitionsAssessmentList(Integer exhibitionId, List<Assess> assessments, Assess myAssessment) {
+	public ExhibitionsAssessmentList(Integer exhibitionId, List<ExhibitionAssess> assessments, Assess myAssessment) {
 		super(myAssessment);
 		this.exhibitionId = exhibitionId;
 	}

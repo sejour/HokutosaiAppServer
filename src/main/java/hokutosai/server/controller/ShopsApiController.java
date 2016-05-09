@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.Assess;
 import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
@@ -17,6 +18,7 @@ import hokutosai.server.data.entity.shops.ShopLike;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.json.shops.ShopAssessmentList;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
@@ -120,6 +122,21 @@ public class ShopsApiController {
 		}
 
 		return result;
+	}
+
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessments", method = RequestMethod.GET)
+	public ShopAssessmentList getAssessments(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
+
+		List<ShopAssess> assessments = this.shopAssessRepository.findByShopId(shopId);
+
+		Assess myAssessment = null;
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+		}
+
+		return new ShopAssessmentList(shopId, assessments, myAssessment);
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.POST)
