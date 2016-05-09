@@ -92,6 +92,20 @@ public class ExhibitionsApiController {
 	    return results;
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}", method = RequestMethod.GET)
+	public SimpleExhibition getById(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException {
+		SimpleExhibition result = this.simpleExhibitionRepository.findOne(exhibitionId);
+		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			ExhibitionLike like = this.exhibitionLikeRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
+			result.setLiked(like != null);
+		}
+
+		return result;
+	}
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
 	public DetailedExhibition getDetails(ServletRequest request, @PathVariable("id") Integer exhibitionId) throws NotFoundException {
 		DetailedExhibition result = this.detailedExhibitionRepository.findByExhibitionId(exhibitionId);
