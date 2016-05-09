@@ -14,7 +14,6 @@ import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopAssessmentReport;
 import hokutosai.server.data.entity.shops.ShopItem;
 import hokutosai.server.data.entity.shops.ShopLike;
-import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
@@ -106,13 +105,6 @@ public class ShopsApiController {
 			result.setLiked(like != null);
 		}
 
-		return result;
-	}
-
-	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.GET)
-	public ShopScore getAssessment(@PathVariable Integer id) throws NotFoundException {
-		ShopScore result = this.shopScoreRepository.findByShopId(id);
-		if (result == null) throw new NotFoundException("The id is not used.");
 		return result;
 	}
 
