@@ -8,16 +8,17 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 
 import hokutosai.server.data.entity.account.SecureAccount;
+import hokutosai.server.data.entity.assessments.Assess;
 import hokutosai.server.data.entity.assessments.AssessedScore;
 import hokutosai.server.data.entity.shops.DetailedShop;
 import hokutosai.server.data.entity.shops.ShopAssess;
 import hokutosai.server.data.entity.shops.ShopAssessmentReport;
 import hokutosai.server.data.entity.shops.ShopItem;
 import hokutosai.server.data.entity.shops.ShopLike;
-import hokutosai.server.data.entity.shops.ShopScore;
 import hokutosai.server.data.entity.shops.SimpleShop;
 import hokutosai.server.data.json.StatusResponse;
 import hokutosai.server.data.json.account.AuthorizedAccount;
+import hokutosai.server.data.json.shops.ShopAssessmentList;
 import hokutosai.server.data.json.shops.ShopAssessmentResponse;
 import hokutosai.server.data.json.shops.ShopLikeResult;
 import hokutosai.server.data.repository.shops.DetailedShopRepository;
@@ -93,6 +94,20 @@ public class ShopsApiController {
 		return this.shopItemRepository.findAll();
 	}
 
+	@RequestMapping(value = "/{id:^[0-9]+$}", method = RequestMethod.GET)
+	public SimpleShop getById(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		SimpleShop result = this.simpleShopRepository.findOne(shopId);
+		if (result == null) throw new NotFoundException("The id is not used.");
+
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setLiked(like != null);
+		}
+
+		return result;
+	}
+
 	@RequestMapping(value = "/{id:^[0-9]+$}/details", method = RequestMethod.GET)
 	public DetailedShop getDetails(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
 		DetailedShop result = this.detailedShopRepository.findByShopId(shopId);
@@ -109,11 +124,19 @@ public class ShopsApiController {
 		return result;
 	}
 
-	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.GET)
-	public ShopScore getAssessment(@PathVariable Integer id) throws NotFoundException {
-		ShopScore result = this.shopScoreRepository.findByShopId(id);
-		if (result == null) throw new NotFoundException("The id is not used.");
-		return result;
+	@RequestMapping(value = "/{id:^[0-9]+$}/assessments", method = RequestMethod.GET)
+	public ShopAssessmentList getAssessments(ServletRequest request, @PathVariable("id") Integer shopId) throws NotFoundException {
+		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
+
+		List<ShopAssess> assessments = this.shopAssessRepository.findByShopId(shopId);
+
+		Assess myAssessment = null;
+		AuthorizedAccount account = RequestAttribute.getAccount(request);
+		if (account != null) {
+			myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+		}
+
+		return new ShopAssessmentList(shopId, assessments, myAssessment);
 	}
 
 	@RequestMapping(value = "/{id:^[0-9]+$}/assessment", method = RequestMethod.POST)

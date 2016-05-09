@@ -1,6 +1,7 @@
 package hokutosai.server.data.repository.exhibitions;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +15,9 @@ import hokutosai.server.data.entity.exhibitions.ExhibitionAssess;
 public interface ExhibitionAssessRepository extends JpaRepository<ExhibitionAssess, Integer>{
 
 	public ExhibitionAssess findByExhibitionIdAndAccountId(Integer exhibitionId, String accountId);
+
+	@Query("SELECT a FROM ExhibitionAssess a WHERE a.exhibitionId = :exhibitionId ORDER BY a.id DESC")
+	public List<ExhibitionAssess> findByExhibitionId(@Param("exhibitionId") Integer exhibitionId);
 
 	@Modifying
 	@Transactional
