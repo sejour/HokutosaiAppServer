@@ -101,6 +101,8 @@ public class ExhibitionsApiController {
 
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
 		if (account != null) {
+			ExhibitionAssess myAssessment = this.exhibitionAssessRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
+			result.setMyAssessment(myAssessment);
 			ExhibitionLike like = this.exhibitionLikeRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
 			result.setLiked(like != null);
 		}

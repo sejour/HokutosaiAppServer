@@ -101,6 +101,8 @@ public class ShopsApiController {
 
 		AuthorizedAccount account = RequestAttribute.getAccount(request);
 		if (account != null) {
+			ShopAssess myAssessment = this.shopAssessRepository.findByShopIdAndAccountId(shopId, account.getId());
+			result.setMyAssessment(myAssessment);
 			ShopLike like = this.shopLikeRepository.findByShopIdAndAccountId(shopId, account.getId());
 			result.setLiked(like != null);
 		}
