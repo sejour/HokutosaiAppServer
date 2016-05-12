@@ -32,7 +32,7 @@ public abstract class Assess {
 
 	@Id
 	@Column(name = "id") @GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonIgnore
+	@JsonProperty("assessment_id")
 	private Integer id;
 
 	@Column(name = "account_id", nullable = false)
