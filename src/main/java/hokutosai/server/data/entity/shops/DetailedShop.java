@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,10 +24,5 @@ public class DetailedShop extends Shop {
 	@JsonProperty("assessments")
 	@Getter @Setter
 	private List<ShopAssess> assessments;
-
-	@Transient
-	@JsonProperty("my_assessment")
-	@Getter @Setter
-	private ShopAssess myAssessment;
 
 }

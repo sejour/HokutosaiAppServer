@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,8 +25,4 @@ public class DetailedExhibition extends Exhibition{
 	@Getter @Setter
 	private List<ExhibitionAssess> assessments;
 
-	@Transient
-	@JsonProperty("my_assessment")
-	@Getter @Setter
-	private ExhibitionAssess myAssessment;
 }

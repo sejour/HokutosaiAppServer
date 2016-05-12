@@ -19,6 +19,8 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
 @Data
@@ -71,5 +73,10 @@ public abstract class Shop {
 	@JoinColumn(name = "shop_id", insertable = false, updatable = false)
 	@JsonProperty("menu")
 	private List<MenuItem> menu;
+
+	@Transient
+	@JsonProperty("my_assessment")
+	@Getter @Setter
+	private ShopAssess myAssessment;
 
 }
