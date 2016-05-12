@@ -15,6 +15,8 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
 @Data
@@ -62,5 +64,10 @@ public abstract class Exhibition {
 	@JoinColumn(name = "place_id", insertable = false, updatable = false)
 	@JsonProperty("place")
 	private Place place;
+
+	@Transient
+	@JsonProperty("my_assessment")
+	@Getter @Setter
+	private ExhibitionAssess myAssessment;
 
 }
