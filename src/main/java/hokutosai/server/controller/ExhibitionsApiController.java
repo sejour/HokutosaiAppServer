@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,6 +31,7 @@ import hokutosai.server.data.json.account.AuthorizedAccount;
 import hokutosai.server.data.json.exhibitions.ExhibitionAssessmentResponse;
 import hokutosai.server.data.json.exhibitions.ExhibitionLikeResult;
 import hokutosai.server.data.json.exhibitions.ExhibitionsAssessmentList;
+import hokutosai.server.data.repository.account.SecureAccountRepository;
 import hokutosai.server.data.repository.exhibitions.DetailedExhibitionRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessRepository;
 import hokutosai.server.data.repository.exhibitions.ExhibitionAssessmentReportRepository;
@@ -68,6 +70,9 @@ public class ExhibitionsApiController {
 
 	@Autowired
 	private ExhibitionAssessmentReportRepository exhibitionAssessmentReportRepository;
+
+	@Autowired
+	private SecureAccountRepository secureAccountRepository;
 
 	@RequestMapping(value = "/enumeration", method = RequestMethod.GET)
 	public List<ExhibitionItem> getEnumeration() {
@@ -146,12 +151,19 @@ public class ExhibitionsApiController {
 			ServletRequest request,
 			@PathVariable("id") Integer exhibitionId,
 			@RequestParam("score") Integer score,
-			@RequestParam("comment") String comment
+			@RequestParam("comment") String comment,
+			@RequestParam(value = "user_name", required = false) String userName
 		) throws NotFoundException, InvalidParameterValueException, InternalServerErrorException
 	{
 		if (!this.simpleExhibitionRepository.exists(exhibitionId)) throw new NotFoundException("The id is not used.");
 
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+
+		// rename user
+		if (userName != null) {
+			if (!StringUtils.hasText(userName)) userName = null;
+			this.secureAccountRepository.updateName(account.getId(), userName);
+		}
 
 		ExhibitionAssess newAssessment = new ExhibitionAssess(exhibitionId, new SecureAccount(account), new Date(), score, comment);
 		ExhibitionAssess oldAssessment = this.exhibitionAssessRepository.findByExhibitionIdAndAccountId(exhibitionId, account.getId());
