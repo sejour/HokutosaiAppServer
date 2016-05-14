@@ -162,6 +162,7 @@ public class ExhibitionsApiController {
 		} else {
 			this.exhibitionAssessRepository.updateAssess(newAssessment.getAccountId(), newAssessment.getExhibitionId(), newAssessment.getDatetime(), newAssessment.getScore(), newAssessment.getComment());
 			this.exhibitionScoreRepository.reassess(exhibitionId, score, oldAssessment.getScore());
+			newAssessment.setId(oldAssessment.getId());
 		}
 
 		AssessedScore aggregate = this.exhibitionScoreRepository.findByExhibitionId(exhibitionId);
