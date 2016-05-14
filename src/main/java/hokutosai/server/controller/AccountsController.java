@@ -15,6 +15,7 @@ import hokutosai.server.util.RequestAttribute;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,6 +62,7 @@ public class AccountsController {
 	public SecureAccount putProfile(ServletRequest request, @RequestParam("user_name") String userName) throws InternalServerErrorException {
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
 
+		if (!StringUtils.hasText(userName)) userName = null;
 		this.secureAccountRepository.updateName(account.getId(), userName);
 
 		SecureAccount secure = new SecureAccount(account);
