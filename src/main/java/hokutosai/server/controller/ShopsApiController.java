@@ -162,6 +162,7 @@ public class ShopsApiController {
 		} else {
 			this.shopAssessRepository.updateAssess(newAssessment.getAccountId(), newAssessment.getShopId(), newAssessment.getDatetime(), newAssessment.getScore(), newAssessment.getComment());
 			this.shopScoreRepository.reassess(shopId, score, oldAssessment.getScore());
+			newAssessment.setId(oldAssessment.getId());
 		}
 
 		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
