@@ -19,6 +19,7 @@ public class ExhibitionsAssessmentList extends AssessmentList {
 	public ExhibitionsAssessmentList(Integer exhibitionId, List<ExhibitionAssess> assessments, Assess myAssessment) {
 		super(myAssessment);
 		this.exhibitionId = exhibitionId;
+		this.assessments = assessments;
 	}
 
 }
