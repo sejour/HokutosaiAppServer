@@ -158,11 +158,13 @@ public class ShopsApiController {
 		if (!this.simpleShopRepository.exists(shopId)) throw new NotFoundException("The id is not used.");
 
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+		String responseUserName = account.getName();
 
 		// rename user
 		if (userName != null) {
 			if (!StringUtils.hasText(userName)) userName = null;
 			this.secureAccountRepository.updateName(account.getId(), userName);
+			responseUserName = userName;
 		}
 
 		ShopAssess newAssessment = new ShopAssess(shopId, new SecureAccount(account), new Date(), score, comment);
@@ -176,6 +178,8 @@ public class ShopsApiController {
 			this.shopScoreRepository.reassess(shopId, score, oldAssessment.getScore());
 			newAssessment.setId(oldAssessment.getId());
 		}
+
+		newAssessment.getUser().setName(responseUserName);
 
 		AssessedScore aggregate = this.shopScoreRepository.findByShopId(shopId);
 
