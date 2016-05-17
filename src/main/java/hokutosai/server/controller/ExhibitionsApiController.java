@@ -158,11 +158,13 @@ public class ExhibitionsApiController {
 		if (!this.simpleExhibitionRepository.exists(exhibitionId)) throw new NotFoundException("The id is not used.");
 
 		AuthorizedAccount account = RequestAttribute.getRequiredAccount(request);
+		String responseUserName = account.getName();
 
 		// rename user
 		if (userName != null) {
 			if (!StringUtils.hasText(userName)) userName = null;
 			this.secureAccountRepository.updateName(account.getId(), userName);
+			responseUserName = userName;
 		}
 
 		ExhibitionAssess newAssessment = new ExhibitionAssess(exhibitionId, new SecureAccount(account), new Date(), score, comment);
@@ -176,6 +178,8 @@ public class ExhibitionsApiController {
 			this.exhibitionScoreRepository.reassess(exhibitionId, score, oldAssessment.getScore());
 			newAssessment.setId(oldAssessment.getId());
 		}
+
+		newAssessment.getUser().setName(responseUserName);
 
 		AssessedScore aggregate = this.exhibitionScoreRepository.findByExhibitionId(exhibitionId);
 
